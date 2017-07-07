@@ -1,0 +1,297 @@
+# Introducción a Javascript
+
+> **AVISO A NAVEGANTES:** en modo alguno debe verse esto como una introducción completa a Javascript. Simplemente se trata de los **conocimientos mínimos necesarios para poder empezar las prácticas de ADI**. Como tal, se pasan por alto muchos temas avanzados (¡y también algunos básicos!).
+
+Javascript nació en el lado del cliente, dentro del navegador, pero en los últimos años se ha trasladado también al lado del servidor. Aquí vamos a ver el "núcleo básico" del lenguaje, la parte común e independiente de en qué lado estemos.
+
+## Características básicas del lenguaje
+
+- **Qué es (y no es) Javascript**
+    + Es un lenguaje de propósito general
+    + **No** es una versión reducida de Java, ni está directamente relacionado con este lenguaje. La semejanza en el nombre es [una cuestión de *marketing*](https://en.wikipedia.org/wiki/JavaScript#Beginnings_at_Netscape).
+    + **No** es un lenguaje trivial, ni pensado para no programadores. Originalmente se usaba para pequeñas tareas que requerían pocas líneas de código y que eran fáciles de copiar/pegar, pero en la actualidad se usa para escribir aplicaciones de cientos de miles de líneas de código.
+
+- **Es interpretado, no compilado**
+    + Los navegadores incluyen un intérprete Javascript (aunque la mayoría de implementaciones usan [compilación Just In Time - JIT](http://creativejs.com/2013/06/the-race-for-speed-part-2-how-javascript-compilers-work/), por motivos de eficiencia).
+    + Al ser interpretado, los fuentes son directamente accesibles, (aunque pueden ser poco legibles si están [*ofuscados* o *minificados*](http://librosweb.es/libro/ajax/capitulo_11/ofuscar_el_codigo_javascript.html).
+    + Lo anterior puede cambiar si tiene éxito la idea de [WebAssembly](http://arstechnica.com/information-technology/2015/06/the-web-is-getting-its-bytecode-webassembly/): un código compilado y portable para una Máquina Virtual Javascript, al estilo del *bytecode* de Java.
+
+- **Hay que distinguir entre el "núcleo" del lenguaje y las librerías** 
+    + Las del navegador nos permiten modificar dinámicamente el HTML/CSS, comunicarnos con el servidor, dibujar en pantalla en 2D/3D ... Por el momento aquí solo vamos a ver el núcleo del lenguaje.
+    +  El núcleo del lenguaje está estandarizado en lo que se denomina ECMAScript. Se eligió un nombre "neutro", ya que Javascript es una marca comercial (ahora de Oracle - antes de Sun, y antes de Netscape). 
+    + La versión de ECMAScript que implementan los navegadores en la actualidad es la 5, implementando algunas características de la 6.
+
+## Sintaxis básica
+
+- A grandes rasgos, la sintaxis básica es muy similar a la de C
+- Los comentarios siguen el estilo C/C++ (`/* ... */`, `//`)
+- El `;` al final de una sentencia es *opcional*, pero se suele recomendar su uso para evitar ambigüedades.
+- Las cadenas se pueden delimitar por comillas dobles o simples (`"hola"`, `'hola'`). Esto será útil cuando lleguemos al navegador y mezclemos JS con HTML (en el que solo se pueden usar comillas dobles). 
+
+### Variables
+
+- No tienen tipo predefinido, o mejor dicho, *el tipo puede cambiar dinámicamente*.
+- No existen palabras clave en el lenguaje para definir tipos. Las variables se declaran simplemente con `var`
+
+```javascript
+var a;
+
+a = 1;
+a = "Hola"; //Cambiamos el tipo. Y JS sin rechistar
+a = [1,2];  //Literal para definir un array. Sigue sin rechistar
+b = "OK";   //Podemos usar variables no declaradas. Se declaran automáticamente
+```
+
+- **Modo estricto**: considera errores ciertos comportamientos "toleradas" en JS, por ejemplo asignar un valor a una variable no declarada
+
+```javascript
+//Activar modo estricto en todo el ámbito del script
+'use strict'
+b = 1 //¡Error!
+
+function strict(){
+  // Activar modo estricto solo en una función
+  'use strict';
+  function nested() { return "And so am I!"; }
+  return "Hi!  I'm a strict mode function!  " + nested();
+}
+function notStrict() { return "I'm not strict."; }
+```
+
+- Internamente se diferencia entre tipos *primitivos* (numérico, *booleano*, cadena) y objetos (por ejemplo `Date`, `RegExp`, entre las "clases" predefinidas en JS, o los objetos que podemos definir nosotros)
+
+```javascript
+console.log(typeof 3)          //"number"
+console.log(typeof 3.5)        //(también) "number"
+console.log(typeof "hola")     //"string"
+console.log(typeof new Date()) //"object"
+```
+
+> Curiosamente, en Javascript tanto los enteros como los reales se representan en coma flotante (en C serían `double`), de ahí que 3 y 3.5 sean del mismo tipo.
+
+- El valor de una variable declarada pero no inicializada es un valor especial llamado `undefined`    
+
+```javascript
+var a,b;
+console.log(b)  //undefined, variable declarada pero no inicializada
+//Comprobar si una variable es undefined
+//Luego veremos por qué se usa el operador `===` en lugar del típico `==`
+if (b===undefined)
+    console.log("b es undefined");
+console.log(c)  //error, intentamos leer una variable no declarada
+```
+
+- En Javascript existe también un valor vacío o `null` que es casi lo mismo que `undefined`, aunque [hay pequeñas diferencias](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/null)
+
+
+### Operadores
+
+- En su mayor parte son equivalentes a los de C. 
+- No se pueden redefinir, al contrario que en C++, aunque algunos están sobrecargados por defecto, por ejemplo `+` también sirve para concatenar cadenas.
+- **CUIDADO**: en Javascript el operador de comparación `==` intenta conversión de tipos. Si queremos comprobar la igualdad estricta, usaremos `===`
+
+```javascript
+1=="1"     //true!!, porque "1" se convierte a 1
+false=="0" //true!!, porque "0" se convierte a 0, e igual que en C, 0 es false
+1===true   //false!! son tipos distintos 
+```
+
+> Se recomienda usar siempre `===` para comprobar si un valor es `undefined` porque `null==undefined`, con lo que se confundirían ambos valores. Con `==` no hay problema ya que no es cierto que `null===undefined`
+
+### Estructuras de control y manejo de errores
+
+- Básicamente son las mismas que en C/Java: `for`, `while`, `do...while`,...
+- Existe una variante del `for` que nos permite iterar por todas las propiedades de un objeto, la veremos cuando hablemos de objetos  
+- Los errores se gestionan con *excepciones* al estilo Java, con `try...catch...finally`.
+
+```javascript
+try {
+  var a = 4;
+  //La siguiente línea daría error por variable no definida
+  a = b + 2;
+  //La siguiente línea en realidad no se ejecutará nunca
+  console.log("Después del error");
+} catch(err) {
+  console.error("Error en try/catch " +  err.message);
+} finally {
+  console.log("Pase lo que pase, llegamos al finally");
+}
+```
+
+- Podemos lanzar nuestras propias excepciones con `throw`. Podemos lanzar un objeto de cualquier clase o simplemente una expresión (numérica, de cadena, booleana,...). 
+- En Javascript las excepciones lanzadas por el *runtime* son instancias de la ["clase" `Error`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
+
+```javascript
+//Ejemplos de uso de throw
+//Podemos lanzar valores cadena, numéricos,...
+throw "La cosa está muy mal";
+...
+throw 33;
+...
+//Podemos lanzar una instancia de cualquier objeto
+...
+var miExcepcion = {codigo:1, mensaje:"¡Error!", tipo:"critico"};
+throw miExcepcion;
+...
+//Podemos aprovechar el constructor estándar "Error"
+throw new Error("La cosa está muy mal");
+```
+
+## Funciones
+
+- Los parámetros **no tienen tipo**, tampoco el valor de retorno
+
+```javascript
+function saludo(nombre) {
+   return 'Hola ' + nombre; 
+}
+
+console.log(saludo('Pepe'));  //Hola Pepe
+console.log(saludo(42));      //Hola 42 (podemos pasar cualquier tipo)
+```
+
+> En el ejemplo anterior puede verse que cuando intentamos "sumar" una cadena y un valor numérico, Javascript convierte automáticamente el número a cadena y concatena ambas.
+
+- Se recomienda **declarar las variables locales a las funciones** con `var` para evitar que por descuido estemos referenciando una global
+
+```javascript
+var mensaje = 'Soy tu padre';
+
+function saludo(nombre) {
+    mensaje = 'Cuidado' + nombre + ', la ira conduce al odio';
+    return mensaje;
+}
+
+saludo('Pepe');
+console.log(mensaje) //"Cuidado, Pepe, la ira conduce al odio"
+```
+
+- Las funciones son "[ciudadanos de primera clase](https://codepicnic.com/codebites/funciones-en-javascript-i-9a1158154dfa42caddbd0694a4e9bdc8)": pueden pasarse como parámetros, ser asignadas a variables y pueden ser devueltas por otra función.
+
+```javascript
+function suma (arg1, arg2)  {
+    var res = arg1 + arg2;
+    return res;
+}
+
+function operar(arg1,arg2,op) {
+  return op(arg1,arg2)
+}
+console.log(operar(2,2,suma));  //4
+```
+
+- **Funciones anónimas**: no se les da un nombre, se definen para ser asignadas a una variable. 
+
+```javascript
+//Este código se supone ejecutándose en un navegador
+//Asociamos una función a un evento sobre un botón
+//El botón estaría definido en HTML:
+//  <input type="button" value="Soy un botón" id="boton"/>
+document.getElementById('boton').onclick = function() {console.log("Hola")};
+```
+
+> Uno de los usos más típicos de las funciones anónimas en JS es en la definición de *callbacks*. En el ejemplo anterior definimos un tipo especial de *callback*: un *manejador de evento*, que el navegador ejecutará cuando se produzca un determinado evento sobre un objeto.
+
+## Paso por valor vs. por referencia
+
+Como ocurre en Java, **los tipos primitivos se pasan por valor y los objetos por referencia**. Esto se aplica al paso de parámetros en funciones y a la asignación. Por ejemplo:
+
+```javascript
+var a,b;
+a = [5];              // Inicializamos un array de una sola posición con un literal
+a[0] = 1;
+b = a;               // b referencia al array a, no es una copia 
+a[0] = 100;
+alert(b[0]);         // muestra el valor 100 
+```
+
+## Objetos
+
+- Las propiedades de los objetos se pueden modificar dinámicamente
+
+```javascript
+var persona;
+persona = new Object();  //Objeto "vacío", sin propiedades
+persona.nombre = "Homer Simpson";
+persona.edad = 34;
+persona.casado = true; 
+delete persona.edad      //A partir de ahora, persona.edad==undefined
+//Las propiedades pueden ser funciones. Estaríamos definiendo un método.
+persona.saludo = function() {console.log("Hola, soy " + this.nombre)};
+persona.saludo();  //Llamamos al método
+```
+
+> Cuando se elimina una propiedad de un objeto con `delete`, esta pasa a ser `undefined`. Esto ocurre en realidad con cualquier propiedad que no tenga un objeto, sea porque la hemos eliminado, sea porque nunca ha existido. Por ejemplo, `persona.altura` también sería `undefined`
+
+- Para iterar por todas las propiedades de un objeto usamos `for...in`
+
+```javascript
+for (propiedad in objeto) {
+  //nótese que objeto.propiedad sería la propiedad llamada "propiedad"
+  console.log(objeto[propiedad]);
+}
+```
+
+- Podemos inicializar un objeto usando *notación literal*: se ponen los campos del objeto como pares `propiedad:valor`, separados por comas. Todo ello delimitado por un par de llaves
+
+```javascript
+var persona = {
+  nombre: "Homer Simpson",
+  edad:34,
+  casado:true,
+  saludo: function() {
+    console.log("Hola, soy " + this.nombre);
+  },
+  //Se pueden especificar arrays usando corchetes
+  hijos: ["Bart", "Lisa", "Maggie"],
+  //Un objeto puede contener a su vez otros objetos
+  profesion : {
+    puesto: "técnico nuclear",
+    lugar: "central de Springfield"
+  },
+  //Si el nombre de una prop. contiene espacios o caracteres especiales, se pone entre comillas
+  "nombre esposa": "Marge"
+};
+```
+
+- **JSON** (*JavaScript Object Notation*) es el formato literal, pero no se admiten caracteres especiales en los nombres de las propiedades
+
+> En JSON existe una forma estándar de representar cadenas, enteros, booleanos, arrays y objetos genéricos, pero no fechas u otros objetos de la librería estándar como expresiones regulares. Tampoco se define cómo representar el valor `undefined`.
+
+
+## Arrays
+
+- Son *colecciones dinámicas* de objetos accesibles por posición, más que *arrays* al estilo C/Java
+    * Cada posición de un array puede ser de un tipo distinto
+    * Al crear un array no es necesario especificar el tamaño. Se pueden añadir/eliminar elementos y el tamaño cambiará dinámicamente. 
+
+```javascript
+//
+var a = new Array();    //O usando notación literal, var a = []
+a[0] = 33;              //Podemos añadir elementos especificando su posición
+a[1] = "hola";
+a.push("el último");    //Otra forma de añadir "por la cola"
+//Al igual que en Java, la propiedad length indica el tamaño del array
+console.log(a.length);  //3
+delete a[0];            
+console.log(a[0]); //Al borrar una posición, esta pasa a ser undefined...
+//... y el tamaño no cambia. 
+console.log(a.length);  //¡¡3!! 
+//Así, podemos ver "length" como el índice del último elemento+1,
+//más que como el tamaño. Pero si no hay "undefined" coincidirán ambos
+a[100] = "¡último ahora!"; //los elementos entre la pos. 3 y la 99 son "undefined"
+```
+<!--
+- La ["clase" Array](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Array) implementa muchos métodos interesantes para trabajar con arrays, por ejemplo para añadir/eliminar elementos, iterar, buscar elementos, ...
+-->
+
+## Módulos
+
+Este año dar módulos ES6
+
+named vs default imports : http://stackoverflow.com/questions/36795819/when-should-i-use-curly-braces-for-es6-import/36796281#36796281
+ 
+- En ECMAScript 5 no hay un estándar para definir módulos. La única modularidad es a base de incluir otros archivos fuente en el actual, al estilo de los `#include` de C (ya lo veremos en la parte del cliente). En ECMAScript 6 sí hay [un formato estándar de módulos](https://github.com/nzakas/understandinges6/blob/master/manuscript/11-Modules.md).
+- De manera "extraoficial" han aparecido diversas propuestas, algunas de las cuales se han convertido en [estándares *de facto*](http://addyosmani.com/writing-modular-js/).
+    * En la *parte del cliente* uno de los formatos más usados es AMD, porque permite cargar código de forma asíncrona. Lo veremos en la parte de la asignatura dedicada al cliente.
+    * En la *parte del servidor* se usa sobre todo CommonJS, que es el sistema de módulos que emplea Node y que veremos en la siguiente sesión de prácticas.
