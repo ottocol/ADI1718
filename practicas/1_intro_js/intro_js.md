@@ -1,6 +1,6 @@
 # Introducción a Javascript
 
-> **AVISO A NAVEGANTES:** en modo alguno debe verse esto como una introducción completa a Javascript. Simplemente se trata de los **conocimientos mínimos necesarios para poder empezar las prácticas de ADI**. Como tal, se pasan por alto muchos temas avanzados (¡y también algunos básicos!).
+> **IMPORTANTE:** en modo alguno debe verse esto como una introducción completa a Javascript. Simplemente se trata de los **conocimientos mínimos necesarios para poder empezar las prácticas de ADI**. Como tal, se pasan por alto muchos temas avanzados (¡y también algunos básicos!). Conforme avancemos en la asignatura se introducirán más conceptos de Javascript que por el momento no vamos a necesitar.
 
 Javascript nació en el lado del cliente, dentro del navegador, pero en los últimos años se ha trasladado también al lado del servidor. Aquí vamos a ver el "núcleo básico" del lenguaje, la parte común e independiente de en qué lado estemos.
 
@@ -9,17 +9,24 @@ Javascript nació en el lado del cliente, dentro del navegador, pero en los últ
 - **Qué es (y no es) Javascript**
     + Es un lenguaje de propósito general
     + **No** es una versión reducida de Java, ni está directamente relacionado con este lenguaje. La semejanza en el nombre es [una cuestión de *marketing*](https://en.wikipedia.org/wiki/JavaScript#Beginnings_at_Netscape).
-    + **No** es un lenguaje trivial, ni pensado para no programadores. Originalmente se usaba para pequeñas tareas que requerían pocas líneas de código y que eran fáciles de copiar/pegar, pero en la actualidad se usa para escribir aplicaciones de cientos de miles de líneas de código.
+    + **No es un lenguaje trivial**, ni pensado para no programadores. Originalmente se usaba para pequeñas tareas que requerían pocas líneas de código y que eran fáciles de copiar/pegar, pero en la actualidad se usa para escribir aplicaciones de cientos de miles de líneas de código.
 
 - **Es interpretado, no compilado**
     + Los navegadores incluyen un intérprete Javascript (aunque la mayoría de implementaciones usan [compilación Just In Time - JIT](http://creativejs.com/2013/06/the-race-for-speed-part-2-how-javascript-compilers-work/), por motivos de eficiencia).
     + Al ser interpretado, los fuentes son directamente accesibles, (aunque pueden ser poco legibles si están [*ofuscados* o *minificados*](http://librosweb.es/libro/ajax/capitulo_11/ofuscar_el_codigo_javascript.html).
+
+<!--
     + Lo anterior puede cambiar si tiene éxito la idea de [WebAssembly](http://arstechnica.com/information-technology/2015/06/the-web-is-getting-its-bytecode-webassembly/): un código compilado y portable para una Máquina Virtual Javascript, al estilo del *bytecode* de Java.
+-->
 
 - **Hay que distinguir entre el "núcleo" del lenguaje y las librerías** 
     + Las del navegador nos permiten modificar dinámicamente el HTML/CSS, comunicarnos con el servidor, dibujar en pantalla en 2D/3D ... Por el momento aquí solo vamos a ver el núcleo del lenguaje.
     +  El núcleo del lenguaje está estandarizado en lo que se denomina ECMAScript. Se eligió un nombre "neutro", ya que Javascript es una marca comercial (ahora de Oracle - antes de Sun, y antes de Netscape). 
-    + La versión de ECMAScript que implementan los navegadores en la actualidad es la 5, implementando algunas características de la 6.
+    + Desde 2015, cada año hay una nueva versión del estándar, que se precede de las letras ES (por ECMAScript). La versión anterior a ES2015 usaba una nomenclatura más tradicional, denominándose ES5. Por complicar un poco, en algunos sitios ES2015 aparece como ES6, usando la nomenclatura antigua. Las últimas versiones de la mayoría de navegadores implementan ES2015 [casi en su totalidad](https://kangax.github.io/compat-table/es6/).
+    
+- **Entornos de ejecución**: aunque JS nació en el navegador, desde hace unos años se usa también para escribir aplicaciones en el servidor (e incluso de escritorio). 
++ Cada navegador tiene su propio intérprete JS. Hace unos años había incompatibilidades importantes entre ellos, que se han ido eliminando conforme se estandarizaba el lenguaje y sus APIs asociados y se dejaba de lado la "guerra de los navegadores". Actualmente los problemas de portabilidad vienen  por el lado de si el navegador ya implementa o no determinada funcionalidad.
++ En el servidor, el entorno de ejecución más usado (y prácticamente el único existente) es Node.
 
 ## Sintaxis básica
 
@@ -28,7 +35,7 @@ Javascript nació en el lado del cliente, dentro del navegador, pero en los últ
 - El `;` al final de una sentencia es *opcional*, pero se suele recomendar su uso para evitar ambigüedades.
 - Las cadenas se pueden delimitar por comillas dobles o simples (`"hola"`, `'hola'`). Esto será útil cuando lleguemos al navegador y mezclemos JS con HTML (en el que solo se pueden usar comillas dobles). 
 
-### Variables
+### Variables y constantes
 
 - No tienen tipo predefinido, o mejor dicho, *el tipo puede cambiar dinámicamente*.
 - No existen palabras clave en el lenguaje para definir tipos. Las variables se declaran simplemente con `var`
@@ -40,22 +47,6 @@ a = 1;
 a = "Hola"; //Cambiamos el tipo. Y JS sin rechistar
 a = [1,2];  //Literal para definir un array. Sigue sin rechistar
 b = "OK";   //Podemos usar variables no declaradas. Se declaran automáticamente
-```
-
-- **Modo estricto**: considera errores ciertos comportamientos "toleradas" en JS, por ejemplo asignar un valor a una variable no declarada
-
-```javascript
-//Activar modo estricto en todo el ámbito del script
-'use strict'
-b = 1 //¡Error!
-
-function strict(){
-  // Activar modo estricto solo en una función
-  'use strict';
-  function nested() { return "And so am I!"; }
-  return "Hi!  I'm a strict mode function!  " + nested();
-}
-function notStrict() { return "I'm not strict."; }
 ```
 
 - Internamente se diferencia entre tipos *primitivos* (numérico, *booleano*, cadena) y objetos (por ejemplo `Date`, `RegExp`, entre las "clases" predefinidas en JS, o los objetos que podemos definir nosotros)
@@ -83,6 +74,44 @@ console.log(c)  //error, intentamos leer una variable no declarada
 
 - En Javascript existe también un valor vacío o `null` que es casi lo mismo que `undefined`, aunque [hay pequeñas diferencias](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/null)
 
+- **Modo estricto**: considera errores ciertos comportamientos "toleradas" en JS, por ejemplo asignar un valor a una variable no declarada
+
+```javascript
+//Activar modo estricto en todo el ámbito del script
+'use strict'
+b = 1 //¡Error!
+
+function strict(){
+  // Activar modo estricto solo en una función
+  'use strict';
+  function nested() { return "And so am I!"; }
+  return "Hi!  I'm a strict mode function!  " + nested();
+}
+function notStrict() { return "I'm not strict."; }
+```
+
+- A diferencia de C y derivados, el ámbito de las variables definidas con `var` no es el bloque (`{...}`) en que se definen, sino la función entera, o el ámbito global si están fuera de una función (más adelante veremos las funciones)
+
+```javascript
+if (false) {
+  var prueba = "hola"
+}
+else {
+  //En esta rama del if también existe la variable prueba
+  //aunque como no se le ha dado valor, será undefined  
+  console.log(prueba)
+}
+```
+
+Es como si el intérprete  de JS moviera las declaraciones de variables al principio del código (al estilo de lo que os recomendábamos hacer en los tiempos de programación 1 :) ). Esto se conoce como *hoisting*.
+
+- En ES2015 se introdujo `let` como alternativa a `var` para declarar variables. `let` define una variable con ámbito de bloque (`{...}`), al estilo C. Si en el ejemplo anterior cambiamos `var` por `let` obtendremos un error en tiempo de ejecución en el `console.log` al no estar definida la variable `prueba`.
+
+- Para definir constantes se usa `const`
+
+```javascript
+const PI_AGAIN = 3.141592
+```
 
 ### Operadores
 
@@ -258,6 +287,10 @@ var persona = {
 
 > En JSON existe una forma estándar de representar cadenas, enteros, booleanos, arrays y objetos genéricos, pero no fechas u otros objetos de la librería estándar como expresiones regulares. Tampoco se define cómo representar el valor `undefined`.
 
+## Clases
+
+TO-DO
+
 
 ## Arrays
 
@@ -285,13 +318,4 @@ a[100] = "¡último ahora!"; //los elementos entre la pos. 3 y la 99 son "undefi
 - La ["clase" Array](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Array) implementa muchos métodos interesantes para trabajar con arrays, por ejemplo para añadir/eliminar elementos, iterar, buscar elementos, ...
 -->
 
-## Módulos
 
-Este año dar módulos ES6
-
-named vs default imports : http://stackoverflow.com/questions/36795819/when-should-i-use-curly-braces-for-es6-import/36796281#36796281
- 
-- En ECMAScript 5 no hay un estándar para definir módulos. La única modularidad es a base de incluir otros archivos fuente en el actual, al estilo de los `#include` de C (ya lo veremos en la parte del cliente). En ECMAScript 6 sí hay [un formato estándar de módulos](https://github.com/nzakas/understandinges6/blob/master/manuscript/11-Modules.md).
-- De manera "extraoficial" han aparecido diversas propuestas, algunas de las cuales se han convertido en [estándares *de facto*](http://addyosmani.com/writing-modular-js/).
-    * En la *parte del cliente* uno de los formatos más usados es AMD, porque permite cargar código de forma asíncrona. Lo veremos en la parte de la asignatura dedicada al cliente.
-    * En la *parte del servidor* se usa sobre todo CommonJS, que es el sistema de módulos que emplea Node y que veremos en la siguiente sesión de prácticas.
