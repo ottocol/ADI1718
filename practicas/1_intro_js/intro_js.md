@@ -287,10 +287,67 @@ var persona = {
 
 > En JSON existe una forma estándar de representar cadenas, enteros, booleanos, arrays y objetos genéricos, pero no fechas u otros objetos de la librería estándar como expresiones regulares. Tampoco se define cómo representar el valor `undefined`.
 
+## Herencia en Javascript: *prototipos*
+
+- Javascript es prácticamente el único lenguaje *mainstream* orientado a objetos que **no incluye la idea de clase ni de herencia basada en clases**, sino basada en **prototipos**
+
+- Cuando creamos un objeto podemos especificar cuál queremos que sea su *prototipo*. Si el objeto no tiene una propiedad, se buscará en el prototipo
+
+
+```javascript
+var unObjeto = {
+  valor: 1,
+  saludar: function() {
+    return "hola, qué tal";
+  }
+}
+
+//El prototipo de "otroObjeto" es "unObjeto"
+var otroObjeto = Object.create(unObjeto);
+console.log(otroObjeto.valor) //1
+console.log(otroObjeto.saludar()) //"hola, qué tal"
+```
+
+- Si un objeto no tiene una propiedad, se buscará en su prototipo. Si sigue sin encontrarse, se irá al prototipo del prototipo, y así sucesivamente hasta llegar a `Object.prototype`.
+- Podemos ver esto como **una forma de herencia en la que un objeto concreto hereda de otro**, en lugar de una clase de otra.
+
 ## Clases
 
-TO-DO
+- La herencia orientada a prototipos es ajena a la experiencia del 99% de los desarrolladores, acostumbrados a la herencia basada en clases de lenguajes como Java o C++. Tanto es así que en Javascript han surgido multitud de patrones de código e incluso librerías para poder definir y usar clases.
+- Finalmente en ES2015 se han añadido clases, con una sintaxis similar a otros lenguajes. 
 
+```javascript
+class Persona {
+    constructor(nombre) {
+        this.nombre = nombre
+    }
+
+    saludar() {
+        console.log("Hola, soy " + this.nombre)
+    }
+
+    get miNombre() {
+        return this.nombre
+    }
+
+    set miNombre(nuevoNombre) {
+        this.nombre = nuevoNombre
+    }
+}
+
+let p = new Persona("Pepe")
+p.saludar()   //Hola, soy Pepe
+p.miNombre = "DJ Pep"
+console.log(p.miNombre) //DJ Pep
+```
+
+A destacar del código anterior:
+
+* Los constructores se definen con la palabra clave `constructor`
+* A diferencia de la notación literal no es necesario separar los nombres de los métodos por comas
+* Podemos definir métodos que actúen de *getters* y *setters* con las palabras clave `get`y `set`. En el ejemplo, al acceder a/cambiar el valor de la propiedad `miNombre` en realidad estamos llamando al *getter* y al *setter*, respectivamente.
+
+> NOTA: A pesar de las clases, Javascript sigue usando internamente herencia basada en prototipos. Es decir, las clases son "azúcar sintáctico".
 
 ## Arrays
 
@@ -314,8 +371,7 @@ console.log(a.length);  //¡¡3!!
 //más que como el tamaño. Pero si no hay "undefined" coincidirán ambos
 a[100] = "¡último ahora!"; //los elementos entre la pos. 3 y la 99 son "undefined"
 ```
-<!--
-- La ["clase" Array](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Array) implementa muchos métodos interesantes para trabajar con arrays, por ejemplo para añadir/eliminar elementos, iterar, buscar elementos, ...
--->
+
+- La [clase Array](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Array) implementa muchos métodos interesantes para trabajar con arrays, por ejemplo para añadir/eliminar elementos, iterar, buscar elementos, ...
 
 
