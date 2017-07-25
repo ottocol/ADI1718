@@ -317,7 +317,7 @@ var persona = {
 
 ## Herencia en Javascript: *prototipos*
 
-- Javascript es prácticamente el único lenguaje *mainstream* orientado a objetos que **no incluye la idea de clase ni de herencia basada en clases**, sino basada en **prototipos**
+- Javascript es prácticamente el único lenguaje *mainstream* orientado a objetos que **originalmente no incluía la idea de clase ni de herencia basada en clases**, sino basada en **prototipos**
 
 - Cuando creamos un objeto podemos especificar cuál queremos que sea su *prototipo*. Si el objeto no tiene una propiedad, se buscará en el prototipo
 
