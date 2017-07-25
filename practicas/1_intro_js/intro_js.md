@@ -168,7 +168,8 @@ throw new Error("La cosa está muy mal");
 
 ## Funciones
 
-- Los parámetros **no tienen tipo**, tampoco el valor de retorno
+- Se definen con la palabra clave `function`. La mayor diferencia con lenguajes tipo C/Java es que los parámetros no tienen tipo declarado (como es lógico dado el tipado dinámico de JS) y tampoco se especifica el tipo de retorno.
+- Para devolver un valor se usa `return` en el cuerpo de la función
 
 ```javascript
 function saludo(nombre) {
@@ -220,6 +221,33 @@ document.getElementById('boton').onclick = function() {console.log("Hola")};
 ```
 
 > Uno de los usos más típicos de las funciones anónimas en JS es en la definición de *callbacks*. En el ejemplo anterior definimos un tipo especial de *callback*: un *manejador de evento*, que el navegador ejecutará cuando se produzca un determinado evento sobre un objeto.
+
+- Funciones de "flecha" (*fat arrow*). Introducidas en ES2015, reciben este nombre por definirse con los caracteres `=>` en lugar de la palabra clave `function`. Esta forma de definir funciones tiene unas cuantas variantes:
+
+En la sintaxis más habitual, primero se ponen los argumentos entre paréntesis y separados por comas, luego `=>` y finalmente una expresión que será el valor de retorno (no hace falta `return`)
+
+```javascript
+let suma = (val1,val2) => val1+val2
+console.log(suma(2,3))  //5
+
+//La función anterior es equivalente a
+let suma = function(val1, val2) {
+    return val1+val2
+}
+```
+
+> Nótese que las funciones de flecha siempre son anónimas, por eso en el ejemplo hemos asignado la función a una variable
+
+Si necesitamos definir algo más que una expresión, ponemos el cuerpo de la función entre llaves, tal y como lo definiríamos usando `function`
+
+```javascript
+//Esta sintaxis no es necesaria para este caso tan sencillo, es solo un ejemplo
+let suma = (val1,val2) => {
+  return val1+val2
+}
+```
+
+La sintaxis de flecha puede verse como una forma de abreviar la definición de funciones, pero tiene otras utilidades, que veremos más adelante en la asignatura. La más importante es la [vinculación léxica del `this`](https://www.eventbrite.com/engineering/learning-es6-arrow-functions/#lexical-this) (que ya veremos en qué consiste).
 
 ## Paso por valor vs. por referencia
 
@@ -283,7 +311,7 @@ var persona = {
 };
 ```
 
-- **JSON** (*JavaScript Object Notation*) es el formato literal, pero no se admiten caracteres especiales en los nombres de las propiedades
+- El formato **JSON** (*JavaScript Object Notation*), muy usado en la actualidad tanto dentro como fuera de Javascript es lo mismo que el formato literal, pero no se admiten caracteres especiales en los nombres de las propiedades
 
 > En JSON existe una forma estándar de representar cadenas, enteros, booleanos, arrays y objetos genéricos, pero no fechas u otros objetos de la librería estándar como expresiones regulares. Tampoco se define cómo representar el valor `undefined`.
 
