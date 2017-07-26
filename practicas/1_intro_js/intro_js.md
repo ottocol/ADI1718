@@ -249,7 +249,7 @@ let suma = (val1,val2) => {
 
 La sintaxis de flecha puede verse como una forma de abreviar la definición de funciones, pero tiene otras utilidades, que veremos más adelante en la asignatura. La más importante es la [vinculación léxica del `this`](https://www.eventbrite.com/engineering/learning-es6-arrow-functions/#lexical-this) (que ya veremos en qué consiste).
 
-## Paso por valor vs. por referencia
+### Paso por valor vs. por referencia
 
 Como ocurre en Java, **los tipos primitivos se pasan por valor y los objetos por referencia**. Esto se aplica al paso de parámetros en funciones y a la asignación. Por ejemplo:
 
@@ -262,9 +262,9 @@ a[0] = 100;
 alert(b[0]);         // muestra el valor 100 
 ```
 
-## Objetos
+## Programación orientada a objetos
 
-- Las propiedades de los objetos se pueden modificar dinámicamente
+- Tanto los mismos objectos como sus propiedades se pueden crear y modificar dinámicamente
 
 ```javascript
 var persona;
@@ -315,7 +315,7 @@ var persona = {
 
 > En JSON existe una forma estándar de representar cadenas, enteros, booleanos, arrays y objetos genéricos, pero no fechas u otros objetos de la librería estándar como expresiones regulares. Tampoco se define cómo representar el valor `undefined`.
 
-## Herencia en Javascript: *prototipos*
+### Prototipos
 
 - Javascript es prácticamente el único lenguaje *mainstream* orientado a objetos que **originalmente no incluía la idea de clase ni de herencia basada en clases**, sino basada en **prototipos**
 
@@ -339,7 +339,7 @@ console.log(otroObjeto.saludar()) //"hola, qué tal"
 - Si un objeto no tiene una propiedad, se buscará en su prototipo. Si sigue sin encontrarse, se irá al prototipo del prototipo, y así sucesivamente hasta llegar a `Object.prototype`.
 - Podemos ver esto como **una forma de herencia en la que un objeto concreto hereda de otro**, en lugar de una clase de otra.
 
-## Clases
+### Clases
 
 - La herencia orientada a prototipos es ajena a la experiencia del 99% de los desarrolladores, acostumbrados a la herencia basada en clases de lenguajes como Java o C++. Tanto es así que en Javascript han surgido multitud de patrones de código e incluso librerías para poder definir y usar clases.
 - Finalmente en ES2015 se han añadido clases, con una sintaxis similar a otros lenguajes. 
