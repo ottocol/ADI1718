@@ -377,6 +377,26 @@ A destacar del código anterior:
 
 > NOTA: A pesar de las clases, Javascript sigue usando internamente herencia basada en prototipos. Es decir, las clases son "azúcar sintáctico".
 
+Para crear una clase que herede de otra la definimos con `extends`
+
+```javascript
+class StarWarsFan extends Persona {
+    constructor(nombre) {
+        super(nombre)
+    }
+
+    saludar() {
+        super.saludar()
+        console.log("Yo soy tu padre")  
+    }
+}
+
+let juan = new StarWarsFan("Juan")
+juan.saludar()  //Hola, soy Juan\n Yo soy tu padre
+```
+
+Como vemos, con `super` podemos invocar el constructor o los métodos de la clase base. El construc
+
 ## Arrays
 
 - Son *colecciones dinámicas* de objetos accesibles por posición, más que *arrays* al estilo C/Java
