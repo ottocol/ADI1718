@@ -382,7 +382,7 @@ Para crear una clase que herede de otra la definimos con `extends`
 ```javascript
 class StarWarsFan extends Persona {
     constructor(nombre) {
-        super(nombre)
+        super("Darth " + nombre)
     }
 
     saludar() {
@@ -392,10 +392,12 @@ class StarWarsFan extends Persona {
 }
 
 let juan = new StarWarsFan("Juan")
-juan.saludar()  //Hola, soy Juan\n Yo soy tu padre
+juan.saludar()  //Hola, soy Darth Juan\n Yo soy tu padre
 ```
 
-Como vemos, con `super` podemos invocar el constructor o los métodos de la clase base. El construc
+Como vemos, con `super` podemos invocar el constructor o los métodos de la clase base. 
+
+Si no definimos constructor en la clase heredada, el intérprete Javascript define automáticamente uno que llama al de la clase base.
 
 ## Arrays
 
