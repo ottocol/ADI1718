@@ -1,5 +1,6 @@
 
- .reveal .slides .titulo h1 {
+ .reveal .slides .titulo h1,
+ .reveal .slides .titulo h2 {
   color: #fff; 
 }
 
