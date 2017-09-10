@@ -9,6 +9,7 @@
 }
 
 
+
 @font-face {
   font-family: 'ChunkFive';
   src: url("fonts/ChunkFive.otf");
@@ -25,7 +26,7 @@ body {
 
 .reveal {
   font-family: Helvetica, sans-serif;
-  font-size: 42px;
+  font-size: 30px;
   font-weight: lighter;
   color: #222; }
 
@@ -77,6 +78,11 @@ body {
   text-align: left;
 }
 
+.reveal .caption {
+  font-size: 0.5em;
+  text-align: center;
+}
+
 /* Ensure certain elements are never larger than the slide itself */
 .reveal img,
 .reveal video,
@@ -105,7 +111,9 @@ body {
   list-style-type: disc; }
 
 .reveal ul ul {
-  list-style-type: square; }
+  list-style-type: square; 
+  font-size: 0.9em;
+}
 
 .reveal ul ul ul {
   list-style-type: circle; }
@@ -116,6 +124,7 @@ body {
 .reveal ol ul {
   display: block;
   margin-left: 40px; }
+
 
 .reveal dt {
   font-weight: bold; }
@@ -134,8 +143,27 @@ body {
   margin: 20px auto;
   padding: 5px;
   font-style: italic;
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.2); }
+  background: rgb(234, 250, 243);
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.2); 
+  font-size: 0.75em;
+  color: rgb(100,100,100);
+  border-radius: 15px;
+  padding: 1em;
+}
+
+
+.reveal blockquote:after{
+  content: ' ';
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: -1px;
+  right: auto;
+  top: auto;
+  bottom: -20px;
+  border: 22px solid;
+  border-color: transparent transparent transparent rgb(234, 250, 243);
+}
 
 .reveal blockquote p:first-child,
 .reveal blockquote p:last-child {
