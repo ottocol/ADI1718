@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Tema 1, parte 1: HTTP básico para aplicaciones web</title>
 
 		<link rel="stylesheet" href="../revealjs/css/reveal.css">
 		<link rel="stylesheet" href="../revealjs/css/theme/ADI1718.css">
@@ -36,13 +36,20 @@
 			// - https://github.com/hakimel/reveal.js#configuration
 			// - https://github.com/hakimel/reveal.js#dependencies
 			Reveal.initialize({
+				history: true,
 				dependencies: [
 					{ src: '../revealjs/plugin/markdown/marked.js' },
 					{ src: '../revealjs/plugin/markdown/markdown.js' },
 					{ src: '../revealjs/plugin/notes/notes.js', async: true },
-					{ src: '../revealjs/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+					{ src: '../revealjs/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../revealjs/plugin/zoom-js/zoom.js', async: true }
 				]
 			});
+			Reveal.configure({ 
+				controls: false,
+				slideNumber: 'c/t'
+			});
+
 		</script>
 	</body>
 </html>
