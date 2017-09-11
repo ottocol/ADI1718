@@ -28,6 +28,8 @@ En los primeros temas de ADI **vamos a olvidar por el momento el cliente y centr
 ---
 
 <!-- .slide: data-background-image="https://motoycasco.com/wp-content/uploads/2014/09/consejos-vender-moto-cuidado-detalles-fotos-2.jpg" -->
+<!-- .slide: style="color: white; text-shadow: 1px 1px 10px black" -->
+
 
 ## ¿Por qué REST?
 
@@ -92,7 +94,10 @@ Los métodos **POST/GET/PUT/DELETE** se asocian respectivamente con las operacio
 
 ---
 
-*   Solo nos falta un **formato estandarizado** para los datos
+Solo nos falta un **formato estandarizado** para los datos
+
+* Que el servidor envía al cliente en peticiones de tipo GET
+* Que el cliente envía al servidor en peticiones de tipo POST/PUT
 
 ---
 
@@ -118,14 +123,22 @@ num: 15}
 
 ## ¿Por qué REST en lugar de otras alternativas?
 
-REST no es más que **un conjunto de convenciones** que podrían ser de otro modo
+En realidad REST no es más que **un conjunto de convenciones arbitrarias**, que podrían ser de otro modo
 
-![](img_2/bushphone.jpg)
+![](img_1b/bushphone.jpg)
 
 ---
 
 ## ¿Por qué REST en lugar de otras alternativas? (II)
 
-> Para diseñar un buen API para los servicios **necesitamos usar algo que la gente conozca**. Así que, aunque no hay nada superior desde el punto de vista técnico en REST y JSON sobre usar RPC con un protocolo de nivel más bajo, usar algo que la gente comprenda bien [...] ayuda mucho en el diseño del API
-> 
-> <footer>Jay Krebs, [Lessons from Building and Scaling LinkedIn](http://www.infoq.com/presentations/linkedin-architecture-stack) (QCon, NY 2013)</footer>
+> Para diseñar un buen API para los servicios necesitamos usar algo que la gente conozca. Así que, **aunque no hay nada superior desde el punto de vista técnico en REST** y JSON con respecto a usar RPC con un protocolo de más bajo nivel, **usar algo que la gente comprenda bien [...] ayuda mucho en el diseño del API**
+
+
+<div class="caption">Jay Krebs, [Lessons from Building and Scaling LinkedIn](http://www.infoq.com/presentations/linkedin-architecture-stack) (QCon, NY 2013)</div>
+
+---
+
+## CRUD no es suficiente
+
+Un API CRUD es un API muy pobre, pero por algún sitio se empieza...la próxima semana veremos APIs REST más "avanzados"
+
