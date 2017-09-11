@@ -125,7 +125,7 @@ false=="0" //true!!, porque "0" se convierte a 0, e igual que en C, 0 es false
 1===true   //false!! son tipos distintos 
 ```
 
-> Se recomienda usar siempre `===` para comprobar si un valor es `undefined` porque `null==undefined`, con lo que se confundirían ambos valores. Con `==` no hay problema ya que no es cierto que `null===undefined`
+> Se recomienda usar siempre `===` para comprobar si un valor es `undefined` porque `null==undefined`, con lo que se confundirían ambos valores. Con `===` no hay ambigüedad ya que no es cierto que `null===undefined`
 
 ### Estructuras de control y manejo de errores
 
