@@ -63,13 +63,13 @@ console.log(typeof new Date()) //"object"
 - El valor de una variable declarada pero no inicializada es un valor especial llamado `undefined`    
 
 ```javascript
-var a,b;
-console.log(b)  //undefined, variable declarada pero no inicializada
+var no_definida;
+console.log(no_definida)  //"undefined", variable declarada pero no inicializada
 //Comprobar si una variable es undefined
 //Luego veremos por qué se usa el operador `===` en lugar del típico `==`
-if (b===undefined)
-    console.log("b es undefined");
-console.log(c)  //error, intentamos leer una variable no declarada
+if (no_definida===undefined)
+    console.log("no_definida es undefined");
+console.log(c)  //ERROR, intentamos leer una variable no declarada
 ```
 
 - En Javascript existe también un valor vacío o `null` que es casi lo mismo que `undefined`, aunque [hay pequeñas diferencias](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/null)
