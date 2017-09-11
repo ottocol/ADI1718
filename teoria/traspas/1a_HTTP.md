@@ -178,7 +178,8 @@ En la actualidad la mayoría son ignorados por el navegador, que se limita a mos
 
 No se guardan datos permanentes entre una petición/respuesta y la siguiente
 
-<div class="caption">[http://xkcd.com/869/](http://xkcd.com/869/)</div>
+[http://xkcd.com/869/](http://xkcd.com/869/) <!-- .element: class="caption" -->
+
 ![](img_1a/xkcd.png)
 
 
