@@ -133,6 +133,7 @@ false=="0" //true!!, porque "0" se convierte a 0, e igual que en C, 0 es false
 - Existe una variante del `for` que nos permite iterar por todas las propiedades de un objeto, la veremos cuando hablemos de objetos  
 - Los errores se gestionan con *excepciones* al estilo Java, con `try...catch...finally`.
 
+[https://repl.it/KxGO/3](https://repl.it/KxGO/3)
 ```javascript
 try {
   var a = 4;
@@ -344,6 +345,7 @@ console.log(otroObjeto.saludar()) //"hola, qué tal"
 - La herencia orientada a prototipos es ajena a la experiencia del 99% de los desarrolladores, acostumbrados a la herencia basada en clases de lenguajes como Java o C++. Tanto es así que en Javascript han surgido multitud de patrones de código e incluso librerías para poder definir y usar clases.
 - Finalmente en ES2015 se han añadido clases, con una sintaxis similar a otros lenguajes. 
 
+[https://repl.it/KxLq/0](https://repl.it/KxLq/0)
 ```javascript
 class Persona {
     constructor(nombre) {
@@ -379,6 +381,7 @@ A destacar del código anterior:
 
 Para crear una clase que herede de otra la definimos con `extends`
 
+[https://repl.it/KxLq/1](https://repl.it/KxLq/1)
 ```javascript
 class StarWarsFan extends Persona {
     constructor(nombre) {
