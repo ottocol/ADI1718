@@ -9,7 +9,6 @@
 }
 
 
-
 @font-face {
   font-family: 'ChunkFive';
   src: url("fonts/ChunkFive.otf");
@@ -49,7 +48,6 @@ body {
   font-family: "ChunkFive", Times, serif;
   line-height: 0.9em;
   letter-spacing: 0.02em;
-  text-shadow: none;
   word-wrap: break-word; 
 }
 
@@ -66,8 +64,6 @@ body {
 .reveal h4 {
   font-size: 1em; }
 
-.reveal h1 {
-  text-shadow: none; }
 
 /*********************************************
  * OTHER
