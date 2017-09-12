@@ -342,7 +342,8 @@ console.log(otroObjeto.saludar()) //"hola, qué tal"
 
 ### Clases
 
-- La herencia orientada a prototipos es ajena a la experiencia del 99% de los desarrolladores, acostumbrados a la herencia basada en clases de lenguajes como Java o C++. Tanto es así que en Javascript han surgido multitud de patrones de código e incluso librerías para poder definir y usar clases.
+- La herencia orientada a prototipos es ajena a la experiencia del 99% de los desarrolladores, acostumbrados a la herencia basada en clases de lenguajes como Java o C++. Tanto es así que en Javascript han surgido multitud de patrones de código e incluso librerías para poder definir y usar clases. 
+- Sin acudir a librerías externas, la forma más habitual de definir una clase en versiones anteriores a ES2015 consiste en definir una función con el nombre de la clase, usarla como constructor, y asignarle propiedades al prototipo de esta función. Podéis ver un ejemplo [aquí](https://leanpub.com/understandinges6/read#leanpub-auto-class-like-structures-in-ecmascript-5) de este patrón, usado en multitud de sitios.
 - Finalmente en ES2015 se han añadido clases, con una sintaxis similar a otros lenguajes. 
 
 [https://repl.it/KxLq/0](https://repl.it/KxLq/0)
