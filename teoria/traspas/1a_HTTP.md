@@ -245,7 +245,9 @@ Omnipresente en la actualidad. Salvo las webs estáticas prácticamente **todo e
 Gracias a AJAX y a Javascript nos podemos llevar **casi todo el código de la aplicación al navegador**, convirtiendo el servidor simplemente en un **API remoto** para guardar/recuperar datos
 <div class="caption">Charla: [The New Application Architectures](http://www.infoq.com/presentations/SpringOne-2GX-2012-Keynote-2), Adrian Colyer 
 
-<div class="stretch">![](img_1a/modern_webapp.png) </div>
+<div class="stretch"> 
+![](img_1a/modern_webapp.png) 
+</div>
 
 ---
 
