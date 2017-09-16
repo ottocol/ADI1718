@@ -272,6 +272,15 @@ body {
   border-color: #2a76dd;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.55); }
 
+img.right_vertical_center {
+  position: absolute;
+  float:right;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
 /*********************************************
  * NAVIGATION CONTROLS
  *********************************************/
