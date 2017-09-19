@@ -323,3 +323,34 @@ img.right_vertical_center {
   -webkit-transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
   -moz-transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985);
   transition: width 800ms cubic-bezier(0.26, 0.86, 0.44, 0.985); }
+
+
+/* Columnas responsive. De http://adamkaplan.me/grid/ */
+
+.column {
+    float: left;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+  
+.column.full { width: 100%; }
+.column.two-thirds { width: 66.7%; }
+.column.half { width: 50%; }
+.column.third { width: 33.3%; }
+.column.fourth { width: 25%; }
+.column.flow-opposite { float: right; }  
+
+
+.clearfix:before,
+.clearfix:after {
+  content: " ";
+  display: table;
+  padding-top: 1em;
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+
+

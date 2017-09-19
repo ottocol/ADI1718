@@ -11,7 +11,9 @@
 
 1. REST en detalle
 2. Buenas prácticas en el diseño de APIs REST
-3. Cuestiones técnicas
+3. Recursos relacionados entre sí
+4. Consultas sobre recursos
+5. Buenas prácticas a nivel técnico
 
 ---
 
@@ -72,7 +74,7 @@ http://graph.facebook.com/me/photos/11000003455
 
 ## Resultado de leer recurso
 
-- **Algunos estados** posibles: **200** (se devuelve el recurso), **404** (el recurso con dicho `id` no existe),  **403** (acceso prohibido), **500** (Error del servidor, p.ej. se ha caído la BD)
+- **Algunos estados** posibles: **200** (se devuelve el recurso), **404** (el recurso con dicho `id` no existe),  **401** (credenciales incorrectas), **500** (Error del servidor, p.ej. se ha caído la BD)
 - La cabecera `Content-Type` especifica el tipo MIME del formato de datos que se está usando
 
 ```http
@@ -87,16 +89,14 @@ Content-Type:application/json
 }
 ```
 
-
 ---
 
 ## Crear recursos
 
-- En general, la URL estará "abierta", apuntando a la colección de recursos, ya que el nuevo recurso todavía no tiene un `id` (típicamente lo asigna el sistema, casi siempre la BD)
+En general, la URL estará "abierta", apuntando a la colección de recursos, ya que el nuevo recurso todavía no tiene un `id` (típicamente lo asigna automáticamente el servidor)
 
 ```http
 http://api.ua.es/asignaturas/ADI_34039/anuncios
-http://api.change.org/peticiones/2/firmas
 ```
 
 - El método debe ser **POST** 
@@ -113,7 +113,6 @@ POST http://api.ua.es/asignaturas/ADI_34039/anuncios HTTP/1.0
 
 ---
 
-
 ## Crear recurso con _id_ conocido
 
 Igual que antes, pero
@@ -121,7 +120,7 @@ Igual que antes, pero
 - La **URL** incluirá el `id`
 
 ```http
-http://api.ua.es/alumnos/123456J
+http://api.ua.es/alumnos/21222333J
 http://api.biblioteca.ua.es/libros/978-3-16-148410-0
 ```
 
@@ -133,9 +132,9 @@ http://api.biblioteca.ua.es/libros/978-3-16-148410-0
 
 ## Crear recurso: resultado
 
-- **Estados** posibles: **201** (Recurso creado correctamente), **403** (acceso prohibido), **400** (petición incorrecta, p.ej. falta un campo o su valor no es válido), **500** (Error del servidor, p.ej. se ha caído la BD)
+- **Estados** posibles: **201** (Recurso creado correctamente), **401** (credenciales incorrectas), **400** (petición incorrecta, p.ej. falta un campo o su valor no es válido), **500** (Error del servidor, p.ej. se ha caído la BD)
 
-- Lo más "ortodoxo" es **devolver la URL del recurso recién creado** como valor de la cabecera HTTP `Location` de la respuesta
+- En caso de **201** Lo más RESTful es **devolver la URL del recurso creado** en la cabecera HTTP `Location` de la respuesta
 
 ```http
 201 CREATED HTTP/1.1
@@ -143,7 +142,6 @@ Location: http://api.ua.es/asignaturas/ADI_3409/anuncios/1245
 ```
 
 ---
-
 
 ## Actualizar recurso
 
@@ -153,7 +151,6 @@ Location: http://api.ua.es/asignaturas/ADI_3409/anuncios/1245
 - **PATCH**: cambiar solo ciertos datos. No está tan difundido como PUT al ser una adición más reciente a HTTP.
 
 - **Resultados posibles**:  **204** (Recurso modificado correctamente, no hay nada que añadir :) ), **404** (recurso no existente), Errores ya vistos con POST (**400**, **500**, **403** ...)
-
 
 ---
 
@@ -169,7 +166,7 @@ Location: http://api.ua.es/asignaturas/ADI_3409/anuncios/1245
 ---
 
 <!-- .slide: class="titulo" -->
-# 2. Buenas prácticas en el diseño de APIs REST
+# 2. Buenas prácticas en el diseño de APIs 
 
 
 ---
@@ -179,6 +176,7 @@ Location: http://api.ua.es/asignaturas/ADI_3409/anuncios/1245
 
 - **No sorprender** a los usuarios del API (son los **desarrolladores** que van a implementar *apps* o webs que lo usen, no los usuarios finales de las *apps* o de las webs)
 - Centrarse en los **casos de uso**
+- **Formalizar la API** antes de implementarla (diseño por contrato, *design first*)
 
 Así especificadas son aplicables al diseño de cualquier tipo de API, no solo REST
 
@@ -204,8 +202,41 @@ El objetivo no es ser puristas REST ([Restafarians](https://en.wiktionary.org/wi
 
 ## Centrarse en los casos de uso
 
-El API debe **facilitar** los casos de uso típicos, no ser un reflejo del funcionamiento interno del sistema, ni  de la base de datos
+El API debe **facilitar los casos de uso típicos**, no ser un reflejo del funcionamiento interno del sistema, ni de la base de datos
 
+![](img_1c/phil_tweet.png)
+
+---
+
+## Especificación de APIs REST
+
+Existen varios lenguajes especialmente creados para **especificar APIs REST** que en general nos permiten:
+
+- Obtener la especificación formal antes de implementar
+- Generar automáticamente un servidor *mock* a partir de la especificación
+- Validar automáticamente que la implementación cumple con la especificación
+- Generar un esqueleto de implementación para servidor o cliente 
+- Documentar automáticamente el API si ya está implementado
+
+---
+
+## Algunos lenguajes de especificación
+
+<div class="row clearfix">
+    <div class="column third">
+      ![](img_1c/apiblueprint-logo-2.png)
+      <div class="caption">[API Blueprint](https://apiblueprint.org/)</div>
+    </div>
+    <div class="column third">
+      ![](img_1c/OpenAPI.png)   
+      <div class="caption">[OpenAPI (antes swagger)](https://www.openapis.org/)</div>
+    </div>
+    <div class="column third">
+      ![](img_1c/raml.png)   
+      <div class="caption">[RAML](https://raml.org/)</div>
+      <div class="caption">[Ejemplo de API](http://static-anypoint-mulesoft-com.s3.amazonaws.com/API_examples_notebooks/raml-design3.html)</div>
+      </div>
+</div>
 
 ---
 
@@ -216,6 +247,64 @@ El API debe **facilitar** los casos de uso típicos, no ser un reflejo del funci
 
 ---
 
+Hasta ahora hemos visto CRUD de **recursos** individuales, pero normalmente estarán **relacionados entre sí** (un usuario tiene pedidos, un post pertenece a un blog, ...)
+
+
+---
+
+## URLs "jerárquicas"
+
+**Subrecursos**: modelan el lado N de una relación 1-N, o bien uno de los lados en una relación 1-1
+
+
+```http
+http://miapificticio.com/usuarios/11111/pedidos
+https://api.github.com/repos/octocat/Hello-World
+https://api.github.com/repos/octocat/Hello-World/issues
+```
+
+---
+
+Si habitualmente necesitamos los subrecursos junto con el recurso "principal" tenemos un [problema de tipo "n+1"](https://www.infoq.com/articles/N-Plus-1)
+
+```http
+http://miapificticiodeblogs.com/blogs/5/posts/1/comentarios
+```
+
+¿Qué pasa si lo habitual es mostrar siempre los comentarios junto con el post del blog?
+
+---
+
+## Subrecursos "embebidos" en la respuesta
+
+Si el caso de uso más habitual es necesitar los subrecursos junto con el recurso "principal" podemos incluirlos siempre en la respuesta
+
+```javascript
+{
+  id: 1;
+  titulo: "Bienvenidos a mi blog"
+  comentarios: [
+     {id: 1, texto: "primero en comentar!!"},
+     {id: 2, texto: "los blogs se han pasado de moda..."}
+  ]
+}
+```
+
+problema: si en algún caso no los necesitamos, malgastamos ancho de banda
+
+
+---
+
+Algunos APIs que van "un poco más allá" de REST permiten controlar qué subrecursos queremos "embeber" 
+
+```http
+GET graph.facebook.com/me?fields=photos.limit(5),posts.limit(5)
+```
+
+En el ejemplo anterior obtenemos junto con el usuario actual de FB sus últimas 5 fotos y sus últimos 5 posts
+
+---
+
 <!-- .slide: class="titulo" -->
 
 # 4. *Consultas* sobre los recursos
@@ -223,11 +312,173 @@ El API debe **facilitar** los casos de uso típicos, no ser un reflejo del funci
 
 ---
 
-<!-- .slide: class="titulo" -->
+## Respuestas parciales
 
-# 5. Algunas cuestiones adicionales
+- Muchas veces un recurso contiene **campos que no necesitamos**, ya que en REST "estándar" siempre se obtiene la **representación completa** del recurso
+- Algunos APIs "un poco más allá" de REST permiten seleccionar **solo los campos que necesitamos**. Al no estar estandarizado, cada cual usa una sintaxis propia
+
+```
+https://graph.facebook.com/JustinBieber?fields=id,name,picture
+https://api.linkedin.com/v1/people/JustinBieber:(id,num-connections,picture-url)
+```
+
+<!-- .element class="caption" --> [Probar el ejemplo de FB de Bieber](https://developers.facebook.com/tools/explorer/145634995501895/?method=GET&path=JustinBieber%3Ffields%3Did%2Cname%2Cpicture&version=v2.10) (hay que estar *logueado* en FB para que funcione)
+
 
 ---
+
+## "Consultas" sobre colecciones
+
+- Es poco habitual obtener **todos** los elementos de un tipo, es más común
+  + Buscar especificando condiciones
+  + Querer resultados paginados
+- Ambos se suelen representar con una *query string* (grupo de parámetros HTTP precedido de `?`)
+
+```http
+http://mislibros.com/libros?titulo_contiene=tronos&autor_contiene=Martin
+https://graph.facebook.com/JustinBieber/photos?offset=5&limit=2
+https://api.github.com/users/octocat/repos?page=2&per_page=5
+```
+
+---
+
+## Paginación
+
+- Los parámetros que admite cada API son propios (`page`&`per_page`, `page`&`count`, `offset`&`limit`...) normalmente el significado es fácil de deducir por el nombre
+
+```http
+https://gateway.marvel.com:443/v1/public/characters?limit=10&offset=0
+```
+
+- Los datos suelen venir acompañados de metadatos indicando página actual, total de datos, etc.
+
+```javascript
+{ "offset": 0,
+    "limit": 10,
+    "total": 1491,
+    "count": 10,
+    "results": [
+      {
+        "id": 1011334,
+        "name": "3-D Man",
+        "description": "",
+        "modified": "2014-04-29T14:18:17-0400",
+        "thumbnail": {
+          "path": "http://i.annihil.us/u/prod/marvel/i/mg/c/e0/535fecbbb9784",
+          "extension": "jpg"
+        }
+        ...
+      }
+        ...
+      ]
+}
+```
+
+---
+
+## Paginación con cursores
+
+**Cursor**: identificador único que marca un dato concreto de la lista. En cada respuesta nos envían generalmente un cursor para ir "atrás" y otro para "adelante"
+
+```
+{
+  "data": [
+     ... aquí estarían los datos en sí de lo que hemos pedido
+  ],
+  "paging": {
+    "cursors": {
+      "after": "MTAxNTExOTQ1MjAwNzI5NDE=",
+      "before": "NDMyNzQyODI3OTQw"
+    },
+    "previous": "https://graph.facebook.com/me/albums?limit=25&before=NDMyNzQyODI3OTQw"
+    "next": "https://graph.facebook.com/me/albums?limit=25&after=MTAxNTExOTQ1MjAwNzI5NDE="
+  }
+}
+```
+
+---
+
+
+<!-- .slide: class="titulo" -->
+
+# 5. Más "buenas prácticas" a nivel técnico
+
+---
+
+## Versionar el API
+
+- Si las URL y las llamadas se mantienen igual entre versiones del API pero cambiamos su comportamiento, "romperemos" los clientes
+- Necesitamos que el cliente pueda **especificar a qué versión del API está llamando**
+
+Solución 1: "incrustar" el número de versión en la URL
+
+```http
+https://graph.facebook.com/v2.5/me
+https://api.twitter.com/1.1/search/tweets.json
+```
+
+Solución 2: (Ortodoxia REST): el cliente envía la cabecera `Accept` indicando qué versión del API quiere. Usada por ejemplo por el API de Github
+
+```http
+//con esto indicamos que queremos usar la versión 3 del API y queremos JSON
+Accept: application/vnd.github.v3+json
+```
+
+---
+
+## Generar los id de los recursos
+
+- **Autonuméricos** de la BD. Solución sencilla, pero puede dar problemas si tenemos más de un servidor de BD para repartir la carga (*shard*)
+- **UUIDS**: podemos "asegurar" que son únicos aunque se generen desde distintas instancias de servidor
+
+```javascript
+//https://repl.it/LQjU
+var uuid = require('uuid/v1')
+console.log(uuid())   //176c8ba0-9cb6-11e7-abab-7df31ea5be22
+```
+
+---
+
+## "Negociación" de contenido
+
+- Hace unos años, todos los APIs devolvían solo XML, ahora casi todos usan solo JSON
+
+<div class="stretch">![](https://img.devrant.io/devrant/rant/r_111482_unPBx.jpg)</div>
+
+- Si queremos que nuestro API admita y sirva varios formatos de datos, se considera una buena práctica que cliente y servidor puedan "**negociar**" el formato más adecuado para ambos
+
+
+---
+
+## Cómo negociar el formato según la ortodoxia REST
+
+- Cliente -> servidor: cabecera `Accept` en la petición
+
+```language-http
+Accept: application/json;q=1.0, application/xml;q=0.5, */*;q=0.0
+```
+
+- Servidor -> cliente: 
+  - Si no se han podido satisfacer las preferencias, código de estado `406 NOT ACCEPTABLE`
+  - Indica el formato que ha enviado con la cabecera `Content-Type`
+
+---
+
+## Cómo se negocia el formato en el "mundo real"
+
+A saber...depende del API:
+
+- Parámetros HTTP
+- Especificado en la URL
+- ...
+
+```http
+https://api.twitter.com/1.1/search/tweets.json
+https://api.flickr.com/services?format=XML&...
+```
+
+
+--- 
 
 <!-- .slide: class="titulo" -->
 
