@@ -175,3 +175,124 @@ http://<your-ip>:<your-port>/jsonrpc
 # 3. APIs en tiempo real
 
 ---
+
+## APIs "en tiempo real"
+
+- En ciertos casos queremos estar al tanto de las **actualizaciones del servidor** (p. ej. un *juego online*, un chat*, ver *tweets*, ...)
+- El cliente puede hacer ***polling* periódicamente, pero es ineficiente**, es mejor que el servidor "nos avise" de que hay nuevos datos, pero...¿cómo?
+
+
+---
+
+## Tecnologías web para tiempo real
+
+- **Webhooks**: el servidor nos avisa con una petición HTTP cuando hay nuevos datos
+- **Long polling**: la conexión se mantiene abierta, el servidor va enviando datos a medida que tiene
+- **Server Sent Events**: similar al *long polling*, además tiene un API orientado a recibir eventos del servidor
+- **Websockets**: comunicación bidireccional basada en eventos
+
+Las tres primeras van sobre HTTTP, pero websockets usa un protocolo propio
+
+---
+
+## Webhooks
+
+- Juntar/modificar ideas que ya conocéis de otras asignaturas
+   - Publicar/Suscribir 
+   - *Callbacks*, pero ahora sobre HTTP
+- Cuando hay algún evento importante, el servidor del API lanza una petición POST a una URL de nuestro servidor (*callback*)
+
+---
+
+## PubSubHubbub
+
+- "Extensión" de *webhooks* en el que las suscripciones las gestiona un tercero (*hub*) 
+
+
+![](img_1d/pubsubhubbub-processo.jpg)
+
+- Añade funcionalidades como la **validación de suscripciones** (para evitar que alguien nos suscriba sin nosotros desearlo): cuando nos suscribimos, el servidor envía un GET al que hay que responder de la forma adecuada para confirmar subscripción
+
+---
+
+## Webhooks "ahí afuera"
+
+- Algunos APIs REST públicos que usan *webhooks* y/o PubSubHubbub: Facebook, Instagram, Github, Paypal, Foursquare, algunos de Google (p.ej. Calendar), ... 
+- Documentación y ejemplos
+  - [Facebook real-time updates](https://developers.facebook.com/docs/graph-api/real-time-updates/)
+  - [Github webhooks](http://developer.github.com/v3/repos/hooks/)
+ 
+
+---
+
+<!-- .slide: data-background-image="img_1d/minions.jpg" -->
+<!-- .slide: style="color: white; text-shadow: 1px 1px 10px black" -->
+
+# Demo:
+# *webhooks* en Github
+
+
+---
+
+## Limitaciones de los webhooks
+
+El suscriptor al *webhook* debe poder responder a peticiones HTTP. No nos vale por ejemplo para avisar a nuestra app cliente en el navegador
+
+![](https://media.giphy.com/media/rvDtLCABDMaqY/giphy.gif)
+
+---
+
+## Server Sent Events vs. Websockets
+
+Ambos son orientados a envío de mensajes
+
+- **SSE**:
+   * Unidireccionales, siempre desde el servidor al cliente
+   * Envían mensajes de texto
+   * Usa HTTP
+
+- **Websockets**
+  * Bidireccionales, tanto cliente como servidor pueden enviar mensajes
+  * Mensajes de texto o binarios
+  * Usa un protocolo propio   
+
+
+---
+
+## Ejemplo de websockets
+
+El API es muy sencillo de usar
+
+Servidor
+```javascript
+var WebSocket = require('ws')
+var wss = new WebSocket.Server({server: httpServer})
+
+wss.on('connection', function(ws, pet) {
+    ws.on('message', function(data){
+        console.log("Mensaje del cliente: " + data)
+    })
+    ws.send("hola, soy el servidor, gracias por conectarte")
+}))
+```
+
+Cliente
+```javascript
+var ws = new WebSocket('ws://localhost:3000')
+ws.onmessage = function(evento) {
+  console.log(evento.data)
+  ws.send("Hola, pues yo soy tu cliente")
+} 
+```
+
+
+---
+
+## Limitaciones adicionales
+
+- **SSE** no está soportado en Explorer/Edge
+- Al ser un protocolo distinto de HTTP, **websockets** puede no funcionar bien si hay *proxies* de por medio o en algunas redes móviles
+
+---
+
+# ¿Alguna duda?
