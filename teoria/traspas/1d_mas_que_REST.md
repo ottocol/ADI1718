@@ -444,7 +444,6 @@ Ambos son orientados a envío de mensajes
 
 El API es muy sencillo de usar
 
-Servidor
 ```javascript
 var WebSocket = require('ws')
 var wss = new WebSocket.Server({server: httpServer})
@@ -456,8 +455,8 @@ wss.on('connection', function(ws, pet) {
     ws.send("hola, soy el servidor, gracias por conectarte")
 }))
 ```
+<!-- .element: class="caption"-->Servidor
 
-Cliente
 ```javascript
 var ws = new WebSocket('ws://localhost:3000')
 ws.onmessage = function(evento) {
@@ -465,6 +464,7 @@ ws.onmessage = function(evento) {
   ws.send("Hola, pues yo soy tu cliente")
 } 
 ```
+<!-- .element: class="caption"-->Cliente
 
 
 ---
