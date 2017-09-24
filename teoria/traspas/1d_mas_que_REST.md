@@ -170,6 +170,45 @@ http://<your-ip>:<your-port>/jsonrpc
 
 ---
 
+## Un problema con los APIs REST
+
+La **granularidad** de los recursos es **fija**. En la petición no podemos indicar que queremos solo **parte del recurso** o que queremos también **recursos relacionados**
+
+Ejemplo de un blog
+
+```http
+http://miapirest.com/posts/1
+```
+
+El diseñador del API puede haber decidido que un post ya incluye los comentarios, o bien que no, pero es una *decisión fija*. Si a veces los necesitamos y otras no, tendremos un problema de eficiencia.
+
+---
+
+Ya vimos que ciertos APIs REST **extienden la sintaxis** para obtener solo algunos campos o para obtener recursos relacionados
+
+```http
+https://graph.facebook.com/JustinBieber?fields=id,name,picture
+https://graph.facebook.com/me?fields=photos.limit(5),posts.limit(5)
+```
+
+Podríamos ver GraphQL como esta idea mejorada y ampliada
+
+---
+
+## ¿Qué es GraphQL?
+
+- Es un lenguaje para hacer consultas flexibles a **APIs orientados a recursos** en los que estos están relacionados entre sí formando un **grafo**
+
+
+---
+
+- Además del lenguaje de consulta hay una sintaxis para definir el **esquema** de los recursos (consultas posibles + estructura del grafo)
+
+![](http://join-monster.readthedocs.io/en/latest/img/schema-graphql.png)
+
+---
+
+
 <!-- .slide: class="titulo" -->
 
 # 3. APIs en tiempo real
