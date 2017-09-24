@@ -303,8 +303,9 @@ mutation {
 
 ---
 
+<!-- .slide: class="dim" -->
 <!-- .slide: data-background-image="img_1d/minions.jpg" -->
-<!-- .slide: style="color: white; text-shadow: 1px 1px 10px black" -->
+<!-- .slide: style="color: white; text-shadow: 1px 1px 3px black" -->
 ## Demo con el nuevo API GraphQL de Github
 
 [https://developer.github.com/v4/explorer/]([https://developer.github.com/v4/explorer/])
@@ -404,8 +405,9 @@ Las tres primeras van sobre HTTTP, pero websockets usa un protocolo propio
 
 ---
 
+<!-- .slide: class="dim" -->
 <!-- .slide: data-background-image="img_1d/minions.jpg" -->
-<!-- .slide: style="color: white; text-shadow: 1px 1px 10px black" -->
+<!-- .slide: style="color: white; text-shadow: 1px 1px 3px black" -->
 
 # Demo:
 # *webhooks* en Github
