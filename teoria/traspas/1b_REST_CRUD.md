@@ -27,6 +27,7 @@ En los primeros temas de ADI **vamos a olvidar por el momento el cliente y centr
 
 ---
 
+<!-- .slide: class="dim" -->
 <!-- .slide: data-background-image="https://motoycasco.com/wp-content/uploads/2014/09/consejos-vender-moto-cuidado-detalles-fotos-2.jpg" -->
 <!-- .slide: style="color: white; text-shadow: 1px 1px 10px black" -->
 
