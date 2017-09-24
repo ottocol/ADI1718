@@ -8,6 +8,14 @@
   background-color: rgb(92,218,133);
 }
 
+.backgrounds .dim {
+     -webkit-filter: opacity(30%);
+     -moz-filter: opacity(30%);
+     -o-filter: opacity(30%);
+     -ms-filter: opacity(30%);
+     filter: opacity(30%);
+ }
+
 
 @font-face {
   font-family: 'ChunkFive';
