@@ -358,7 +358,7 @@ GraphQL es una tecnología prometedora, pero como todas las nuevas tecnologías 
 
 ## APIs "en tiempo real"
 
-- En ciertos casos queremos estar al tanto de las **actualizaciones del servidor** (p. ej. un *juego online*, un chat*, ver *tweets*, ...)
+- En ciertos casos queremos estar al tanto de las **actualizaciones del servidor** (p. ej. un *juego online*, un *chat*, ver los *tweets* de nuestro *timeline*, ...)
 - El cliente puede hacer ***polling* periódicamente, pero es ineficiente**, es mejor que el servidor "nos avise" de que hay nuevos datos, pero...¿cómo?
 
 
@@ -378,8 +378,8 @@ Las tres primeras van sobre HTTTP, pero websockets usa un protocolo propio
 ## Webhooks
 
 - Unir/modificar ideas que ya conocéis de otras asignaturas
-   - "Patrón de diseño" Publicar/Suscribir 
-   - *Callbacks*, pero ahora sobre HTTP
+   - "Patrón de diseño" **publicar/suscribir** 
+   - ***Callbacks***
 - Cuando hay algún evento importante, el servidor del API lanza una petición POST a una URL de nuestro servidor (*callback*)
 
 ---
