@@ -298,7 +298,7 @@ problema: si en algún caso no los necesitamos, malgastamos ancho de banda
 Algunos APIs que van "un poco más allá" de REST permiten controlar qué subrecursos queremos "embeber" 
 
 ```http
-GET graph.facebook.com/me?fields=photos.limit(5),posts.limit(5)
+https://graph.facebook.com/me?fields=photos.limit(5),posts.limit(5)
 ```
 
 En el ejemplo anterior obtenemos junto con el usuario actual de FB sus últimas 5 fotos y sus últimos 5 posts
