@@ -118,7 +118,6 @@ RPC no es implícitamente inferior (ni superior) a REST
 Algunos *frameworks* para desarrollar APIs RPC van un paso más allá y **hacen transparente la llamada remota**. En el código no hacemos peticiones HTTP sino en apariencia solo llamadas a **métodos/funciones**. Por ejemplo, [Apache Thrift](http://thrift.apache.org)
 
 ```javascript
-//cliente
 var transport = new Thrift.TXHRTransport("http://localhost:8585/hello");
 var protocol  = new Thrift.TJSONProtocol(transport);
 var client = new HelloSvcClient(protocol);
@@ -166,7 +165,7 @@ http://<your-ip>:<your-port>/jsonrpc
 
 <!-- .slide: class="titulo" -->
 
-# 2. GraphQL
+# 2. Introducción básica a GraphQL
 
 ---
 
@@ -174,11 +173,11 @@ http://<your-ip>:<your-port>/jsonrpc
 
 La **granularidad** de los recursos es **fija**. En la petición no podemos indicar que queremos solo **parte del recurso** o que queremos también **recursos relacionados**
 
-Ejemplo de un blog
 
 ```http
-http://miapirest.com/posts/1
+http://miapirest.com/blogs/1/posts/1
 ```
+<!-- .element class="caption" -->Queremos ver el post 1 del blog 1
 
 El diseñador del API puede haber decidido que un post ya incluye los comentarios, o bien que no, pero es una *decisión fija*. Si a veces los necesitamos y otras no, tendremos un problema de eficiencia.
 
@@ -197,17 +196,158 @@ Podríamos ver GraphQL como esta idea mejorada y ampliada
 
 ## ¿Qué es GraphQL?
 
-- Es un lenguaje para hacer consultas flexibles a **APIs orientados a recursos** en los que estos están relacionados entre sí formando un **grafo**
+Es un lenguaje para hacer consultas flexibles a **APIs orientados a recursos** en los que estos están relacionados entre sí formando un **grafo**
+
+![](https://scontent.falc1-1.fna.fbcdn.net/v/t39.2365-6/11891339_452528061601395_1389717909_n.jpg?oh=c78fee1a5404ad86d33a19de9141bde8&oe=5A4B063C)
+
+---
+
+## Esquema GraphQL
+
+Además del lenguaje de consulta hay una sintaxis para definir el **esquema** de los recursos (**consultas** posibles + **estructura** del grafo)
+
+![](img_1d/schema.png)
+
+---
+
+## Evolución de GraphQL
+
+- Desarrollado en Facebook y usado internamente desde 2012. [Dado a conocer](https://www.youtube.com/watch?v=9sc8Pyc51uU) en 2015
+- La especificación es *open source*, aunque controlada por FB: [https://github.com/facebook/graphql](https://github.com/facebook/graphql)
+- Hay [multitud de implementaciones](http://graphql.org/code/) de cliente y servidor en diferentes lenguajes. Las más conocidas son [Relay](https://facebook.github.io/relay/) (de FB) y [Apollo](http://dev.apollodata.com/) (terceros)
+  
+
+---
+
+## Ejemplo sencillo
+
+- Tomado de [https://github.com/kadirahq/graphql-blog-schema](https://github.com/kadirahq/graphql-blog-schema)
+
+- [Esquema](https://github.com/kadirahq/graphql-blog-schema/blob/master/src/schema.js)
+  * Recursos: `Post`, `Category`, `Author`, `Comment` 
+  * Relaciones:  `Post->Category(1:1)`, `Post->Comment(1:N)`, `Post->Author(1:1)`, `Comment->Author(1:N)`
+
+---
+
+## Cómo probar el ejemplo
+
+1. Clonar el [repositorio git](https://github.com/kadirahq/graphql-blog-schema)
+2. Instalar dependencias con `npm install`
+3. Arrancar el servidor GraphQL con `npm run start`
+4. Abrir un navegador e ir a `http://localhost:3000`. Aparecerá [GraphiQL](https://github.com/graphql/graphiql), que es un editor interactivo y con autocompletado para lanzar consultas a APIs GraphQL
+
+---
+
+Podéis probar estas consultas, u otras similares:
+
+```javascript
+query {
+  latestPost {
+    author {
+      name
+    }
+  }
+}
+```
+
+```javascript
+query {
+  recentPosts(count:2) {
+    title
+    category 
+  }
+}
+```
+
+---
+
+En el *[schema](https://github.com/kadirahq/graphql-blog-schema/blob/master/src/schema.js)* se define la interfaz con el API: las **queries** (consultas, peticiones de tipo READ) y las **mutaciones** (modificaciones, peticiones de tipo CREATE/UPDATE/DELETE)
+
+```javascript
+const Schema = new GraphQLSchema({
+  query: Query,
+  mutation: Mutation
+});
+
+const Query = new GraphQLObjectType({
+  name: 'BlogSchema',
+  description: 'Root of the Blog Schema',
+  fields: () => ({
+    posts: {
+      ...
+    }
+    latestPost: {
+      ...
+    }
+    ...
+  })
+  ...
+})
+```
+
+---
+
+Ejemplo de mutación
+
+```javascript
+mutation {
+  createAuthor(_id:"Pepito", name:"Pepito Pérez", twitterHandle:"@pepito") {
+    #la mutación devuelve el autor creado, mostramos el nombre
+    #(aunque es un poco tontería porque ya lo sabíamos :))
+    name
+  }
+}
+```
+
 
 
 ---
 
-- Además del lenguaje de consulta hay una sintaxis para definir el **esquema** de los recursos (consultas posibles + estructura del grafo)
+<!-- .slide: data-background-image="img_1d/minions.jpg" -->
+<!-- .slide: style="color: white; text-shadow: 1px 1px 10px black" -->
+## Demo con el nuevo API GraphQL de Github
 
-![](http://join-monster.readthedocs.io/en/latest/img/schema-graphql.png)
+[https://developer.github.com/v4/explorer/]([https://developer.github.com/v4/explorer/])
 
 ---
 
+## Más sobre GraphQL
+
+- Nótese que en un API REST hay una URL por recurso, aquí todas las peticiones van a la misma URL
+
+```http
+http://miservidorgraphql/api?query={...}
+```
+
+- Para los errores no se usa el código de estado HTTP, sino campos en el JSON de la respuesta
+
+```javascript
+#query incorrecta, ya que el campo "titulo" no existe
+query {
+  post(_id:"100") {
+    titulo
+  }
+}
+
+#respuesta del servidor
+{
+  "errors": [
+    {
+      "message": "Cannot query field \"titulo\" on type \"Post\"."
+    }
+  ]
+}
+```
+
+---
+
+GraphQL es una tecnología prometedora, pero como todas las nuevas tecnologías tiene un tiempo de vida incierto
+
+<iframe width="640" height="360" data-src="https://www.youtube.com/embed/cUIhcgtMvGc" frameborder="0" allowfullscreen></iframe>"</iframe>
+
+<!-- .element: class="caption" --> [Por qué API REST está muerto y debemos usar APIs GraphQL - José María Rodríguez](https://youtu.be/cUIhcgtMvGc)
+
+---
 
 <!-- .slide: class="titulo" -->
 
@@ -236,8 +376,8 @@ Las tres primeras van sobre HTTTP, pero websockets usa un protocolo propio
 
 ## Webhooks
 
-- Juntar/modificar ideas que ya conocéis de otras asignaturas
-   - Publicar/Suscribir 
+- Unir/modificar ideas que ya conocéis de otras asignaturas
+   - "Patrón de diseño" Publicar/Suscribir 
    - *Callbacks*, pero ahora sobre HTTP
 - Cuando hay algún evento importante, el servidor del API lanza una petición POST a una URL de nuestro servidor (*callback*)
 
