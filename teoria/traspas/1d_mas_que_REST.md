@@ -412,6 +412,26 @@ Las tres primeras van sobre HTTTP, pero websockets usa un protocolo propio
 # Demo:
 # *webhooks* en Github
 
+---
+
+1. Necesitamos un servidor que pueda recibir peticiones del exterior. Podemos usar [RequestBin](https://requestb.in/) para obtener una URL pública a la que hacer peticiones
+2. En el API REST de github, dada la URL de un repo, sus *webhooks* están en `hooks` (`https://api.github.com/repos/:nombre_usuario/:nombre_repo/hooks`. Como queremos *crear* uno nuevo, hay que enviar un POST con datos JSON, por ejemplo
+
+```javascript
+{
+  "name": "web",
+  "active": true,
+  "events": [
+    "push",
+    "pull_request"
+  ],
+  "config": {
+    "url": URL pública que nos ha dado RequestBin,
+    "content_type": "json"
+  }
+}
+
+```
 
 ---
 
