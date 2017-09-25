@@ -14,7 +14,7 @@ Además de identificar los recursos debéis identificar las relaciones entre ell
 
 ![](img/modelo_datos.png)
 
-En este ejemplo los arcos indican relaciones y los `*` indican `a muchos`.
+En este ejemplo (cutre, pero no espero que hagáis nada más sofisticado) los arcos indican relaciones y los `*` indican `a muchos`.
 
 ### Formulación de los casos de uso simplificados
 
@@ -22,8 +22,17 @@ Con "simplificados" queremos decir que basta con formularlos de forma sencille e
 
 * Un usuario sin estar autentificado debe poder ver los datos más importantes de la lista de proyectos más populares en el sitio
 * Un usuario sin estar autentificado debe poder ver todos los datos de un proyecto
+* Un usuario autentificado debe poder elegir una modalidad de apoyo y apoyar un proyecto con esa cantidad
+* El usuario que ha creado un proyecto, si está autentificado debe poder enviar actualizaciones (==noticias) sobre el estado del mismo
+* Un usuario debe poder hacer login en la aplicación
+...
 
-La documentación sobre los recursos identificados y los casos de uso se debe incluir en la entrega (no es necesario que sea más extensa de 1-2 páginas).
+Cuestiones importantes sobre los casos de uso:
+
+1. *Las llamadas del API deben estar orientadas a satisfacer los casos de uso, aunque no es necesario que haya una correspondencia 1:1*. Es posible que para resolver un caso de uso hagan falta varias llamadas al API. Por ejemplo es posible que para ver un proyecto incluyendo todas las novedades (*actualizaciones*, en el diagrama) hagan falta dos llamadas al API: una para los datos básicos del proyecto y otra para las actualizaciones. Dependerá si los datos básicos sin actualizaciones o las actualizaciones pueden tener uso por sí mismos para otro caso de uso.
+2. *No es necesario que implementéis todos los casos de uso (como aparece en los requisitos mínimos)*, así que no os quedéis cortos en este apartado, cuanto más pongáis más os hacéis una idea del potencial y las posibilidades de vuestro API.
+
+La documentación sobre los recursos identificados y los casos de uso **se debe incluir en la entrega** (1-2 páginas, no es necesario más). Además, una vez diseñado el API a partir de esto debéis hacer una correspondencia entre llamadas al API y caso de uso que satisfacen (1-2 páginas más máximo).
 
 ## Requisitos mínimos de la implementación
 
@@ -33,10 +42,7 @@ Como mínimo todas las prácticas deben cumplir estos requisitos para poder apro
 
 > Importante: aunque hayáis puesto como caso de uso hacer login en el sistema, por el momento lo vamos a ignorar
 
-Se deben implementar al menos 7 llamadas distintas al API (más la de autentificación que se describe en el apartado anterior):
-    
-- Debe haber al menos dos casos de GET (1 de lectura de un recurso sabiendo su `id` y 1 de lectura de una colección), y al menos un caso de POST, PUT y DELETE. Esto nos da 5 llamadas. Las dos restantes pueden ser del tipo que queráis.  
-- En los casos de uso de consulta de un recurso sabiendo su `id` hay que justificar en la documentación por qué o por qué no se incluyen los objetos relacionados. Por ejemplo al leer un *post* de un blog, se podrían incluir los comentarios completos, solo los `id`s o solo el *post* en sí.
+Se deben implementar al menos 7 llamadas distintas al API (más la de autentificación, o *login*, que se describe en el apartado siguiente). Debe haber al menos dos casos de GET (1 de lectura de un recurso sabiendo su `id` y 1 de lectura de una colección), y al menos un caso de POST, PUT y DELETE. Esto nos da 5 llamadas. Las dos restantes pueden ser del tipo que queráis.  
 
 Se debe realizar *testing* de todas las llamadas al API. Se propone usar Mocha y supertest, pero en su lugar podéis usar las herramientas que deseéis.
 
@@ -44,17 +50,19 @@ Se debe realizar *testing* de todas las llamadas al API. Se propone usar Mocha y
 
 El API debe permitir autentificación mediante JSON web token. Para ayudaros en la implementación solo podéis usar el paquete [jwt-simple](https://www.npmjs.com/package/jwt-simple) pero no más librerías adicionales.
 
-En el contexto de JSON Web token "hacer login en la aplicación" es realmente "obtener el token". Mapeadlo con una petición GET a la URL que queráis, pasando en la petición HTTP el login y el password en JSON y obteniendo como resultado en *token* en el cuerpo de la respuesta.
+En el contexto de JSON Web token "hacer login en la aplicación" es realmente "obtener el token". Mapeadlo con una petición GET a la URL que queráis, pasando en la petición HTTP el login y el password en JSON y obteniendo como resultado en *token* en el cuerpo de la respuesta. Esta es una llamada adicional a las otras 7 que debéis implementar.
 
 ## Persistencia de datos
 
 En principio los datos devueltos por el API y que se creen a través de él se almacenarán en memoria, como hacemos en el ejemplo de la lista de la compra. Podéis usar la estructura de datos que queráis. Si en lugar de guardar datos en memoria usáis una base de datos se os contará como requisito adicional.
 
+Para inicializar los datos en memoria o en la BD podéis ayudaros de herramientas como [`faker.js`](https://github.com/marak/Faker.js/), se mostrará brevemente su uso en clase.
+
 ## Requisitos "adicionales"
 
 Para poder puntuar estos requisitos es necesario haber implementado correctamente los requisitos mínimos. De este apartado podéis elegir los requerimientos que deseéis.
 
-**(2 puntos)** Implementar la persistencia del API con base de datos. Podéis usar para ello los paquetes Node que queráis. En caso de implementar este apartado no es necesario guardar además los datos en memoria.
+**(2 puntos)** Implementar la persistencia del API con base de datos. Podéis usar para ello la base de datos y las librerías de acceso que queráis. En caso de implementar este apartado no es necesario guardar además los datos en memoria.
 
 **(1 ó 2 puntos)** Implementar el acceso real a un API externo para cumplir con alguna funcionalidad. Por ejemplo supongamos un sitio de búsqueda de hoteles en ciertas fechas que en la ficha de cada hotel incuye el tiempo que va a hacer ese día, obtenido de un API externo. **Si el API externo usa OAUth se podrán obtener hasta 2 puntos, si usa un mecanismo más sencillo, hasta 1**. En este apartado os podéis ayudar de cualquier librería JS/paquete npm.
 
@@ -66,13 +74,11 @@ Para poder puntuar estos requisitos es necesario haber implementado correctament
 
 ## Plazo de entrega
 
-El plazo de entrega de la práctica concluye el **día 7 de noviembre a las 23:55**. La entrega se realizará en moodle enviando un único archivo comprimido en .zip o similar. 
+El plazo de entrega de la práctica concluye el **lunes día 23 de octubre a las 23:55**. La entrega se realizará en moodle enviando un único archivo comprimido en .zip o similar. 
 
 Se entregará:
 
 - Un proyecto Node con un `package.json` con las dependencias. No debéis incluir el directorio `node_modules` en la entrega, ya que si las dependencias están especificadas correctamente en el `package.json`, los paquetes se pueden instalar automáticamente con `npm install`.  
 
-- Un archivo de documentación, en formato .txt, en el que expliquéis:
-  - Brevemente el por qué de cada caso de uso, por qué devuelve la información que devuelve si es un GET, por qué requiere o no autorización, etc. En la mayoría de casos la explicación será muy breve. 
-  - Un par de "historias de usuario" en la que un usuario final interactúa con una hipotética web que hace uso del API, diciendo en cada momento qué caso de uso se estaría empleando. Por ejemplo en una tienda un usuario que va a comprar, primero buscaría el producto, con lo cual emplearía el caso de uso "buscar", luego el de "ver información de un producto dado su id", luego el de "comprar producto", ...
+- Un archivo con la documentación de casos de uso, de relaciones entre llamadas al API y casos de uso y el diagrama de relaciones entre recursos. Puede ser tan simple como un txt y un png, o un pdf.
 
