@@ -86,13 +86,15 @@ Supongamos que queremos comprobar que la página de la UA contiene la cadena "Un
 
 ```javascript
 describe('mi suite asíncrona', function(){
-    it ('la petición a www.ua.es contiene el nombre de la UA', function(){
-        request('http://www.ua.es', function(error, respuesta, body) {
-            //indexOf devuelve la posición de una subcadena dentro de otra
-            //si la subcadena no está devuelve -1
-            assert(body.indexOf("Universidad de Alicante")!=-1);
-        });
-    });
+  it ('la petición a www.ua.es contiene el nombre de la UA', function(){
+        request
+          .get('http://www.ua.es')
+          .end(function(error, respuesta) {
+            //indexOf devuelve la posición de una subcadena dentro de otra.
+            //Si la subcadena no está devuelve -1
+            assert(respuesta.text.indexOf("Universidad de Alicante")!=-1)
+        })
+  })
 })
 ```
 
@@ -105,9 +107,10 @@ La solución es ejecutar una función que le indique a Mocha que ya han acabado 
 ```javascript
 describe('mi suite asíncrona', function(){
     it ('la petición a www.ua.es contiene el nombre de la UA', function(done){
-        request('http://www.ua.es', function(error, respuesta, body) {
-            //seguro que este assert se ejecuta, todavía no hemos hecho done()
-            assert(body.indexOf("Universidad de Alicante")>=0);
+        request
+          .get('http://www.ua.es')
+          .end(function(error, respuesta) {
+            assert(respuesta.text.indexOf("Universidad de Alicante")!=-1)
             //ya ha acabado el test
             done();
         });
