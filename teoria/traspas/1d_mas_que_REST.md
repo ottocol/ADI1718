@@ -368,7 +368,7 @@ GraphQL es una tecnología prometedora, pero como todas las nuevas tecnologías 
 
 - **Long polling**: el cliente hace *polling* pero la conexión se mantiene abierta hasta que el servidor envía datos. Entonces hay que hacer *polling* de nuevo
 - **Webhooks**: el servidor nos avisa con una petición HTTP cuando hay nuevos datos
-- **Server Sent Events**: similar al *long polling*, además tiene un API orientado a recibir eventos del servidor
+- **Server Sent Events**: API orientado a que el cliente pueda recibir eventos del servidor
 - **Websockets**: comunicación bidireccional basada en eventos
 
 Las tres primeras van sobre HTTTP, pero websockets usa un protocolo propio
