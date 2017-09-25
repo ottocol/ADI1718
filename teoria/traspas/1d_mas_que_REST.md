@@ -364,10 +364,10 @@ GraphQL es una tecnología prometedora, pero como todas las nuevas tecnologías 
 
 ---
 
-## Tecnologías web para tiempo real
+## Algunas tecnologías web para tiempo real
 
+- **Long polling**: el cliente hace *polling* pero la conexión se mantiene abierta hasta que el servidor envía datos. Entonces hay que hacer *polling* de nuevo
 - **Webhooks**: el servidor nos avisa con una petición HTTP cuando hay nuevos datos
-- **Long polling**: la conexión se mantiene abierta, el servidor va enviando datos a medida que tiene
 - **Server Sent Events**: similar al *long polling*, además tiene un API orientado a recibir eventos del servidor
 - **Websockets**: comunicación bidireccional basada en eventos
 
