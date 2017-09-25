@@ -621,16 +621,12 @@ Software que puede actuar tanto de *reverse* como de *forward*
 ## Cache con expiración
 
 *   En general, la cache de HTTP se controla con **cabeceras** 
-*   En el **modo de expiración** especificamos cuánto tiempo cachear la información (en segundos)
-    *   En HTTP 1.0 se fijaba la "fecha de caducidad" (problemático por la necesaria "sincronización de relojes" entre cliente y servidor)
-    *   Con `private` en lugar de `public` indicaríamos que no se debe cachear en caches compartidas (o sea, solo en la máquina del cliente)
-
+*   En el **modo de expiración**, el más sencillo, especificamos cuánto tiempo cachear la información (en segundos)
+    
 ```http
 HTTP/1.1 200 OK
 Content-Type: text/html;charset=utf-8
 Cache-Control: public, max-age=3600
-Expires: Mon, 09 Dec 2013 09:57:27 GMT  #esto es de HTTP/1.0
-Content-Length: 163
 ... 
 ```
 
