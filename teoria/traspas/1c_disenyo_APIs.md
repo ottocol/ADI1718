@@ -504,14 +504,15 @@ https://api.flickr.com/services?format=XML...
 
 Imitar el funcionamiento de la web, en la que para seguir los pasos en un flujo de trabajo vamos saltando entre enlaces, sin necesidad de conocer previamente las URL
 
-![](img_1d/amazon.png)
 <!-- .element: class="stretch" -->
+![](img_1c/amazon.png)
 
 ---
 
 ## Hipermedia en REST
 
-En cada respuesta debemos incluir enlaces con las operaciones posibles y los recursos directamente relacionados
+- En cada respuesta debemos incluir enlaces con las **operaciones** posibles y los **recursos** directamente relacionados
+- Aunque en JSON no hay un tipo de datos URL, hay formatos más o menos difundidos para representar vínculos, por ejemplo [HAL](http://stateless.co/hal_specification.html)
 
 ```javascript
 {
@@ -520,18 +521,57 @@ En cada respuesta debemos incluir enlaces con las operaciones posibles y los rec
     {"id":"12", "cantidad":"1"},
     {"id":"1123", "cantidad":"2"}
   ]
-  "link": {
-    "rel": "self",
-    "href": "http://miapi.com/pedidos/1"    
-  },
-  "link": {
-    "rel": "items",
-    "href": "http://miapi.com/pedidos/1/items"  
-  },
-  "link": {
-    "rel": "pagar",
-    "href": "http://miapi.com/pagos/pedidos/1"  
+  "_links": {
+    "self": {
+       "href": "http://miapi.com/pedidos/1"  
+    },  
+    "items": {
+      "href": "http://miapi.com/pedidos/1/items"  
+    },
+    "pagar": {
+      "href": "http://miapi.com/pagos/pedidos/1"  
+    }
   }
+}
+```
+
+---
+
+La idea de HATEOAS es que al final el API es como una máquina de estados y pasamos de un estado a otro haciendo peticiones
+
+<!-- .element: class="stretch" -->![](https://eamodeorubio.files.wordpress.com/2012/09/order_state_machine.png)
+
+---
+
+## Paginación
+
+Es un ejemplo apropiado para hipermedia, ya que es recomendable incluir **vínculos** a los datos de (al menos) la página anterior y siguiente
+
+```javascript
+{
+    "_links": {
+        "self": {
+            "href": "http://example.org/api/books?page=3"
+        },
+        "first": {
+            "href": "http://example.org/api/books"
+        },
+        "prev": {
+            "href": "http://example.org/api/books?page=2"
+        },
+        "next": {
+            "href": "http://example.org/api/books?page=4"
+        },
+        "last": {
+            "href": "http://example.org/api/books?page=133"
+        }
+    }
+    "count": 2,
+    "total": 498,
+    "data": {
+        { title: "Canción de hielo y fuego", author: "George R.R. Martin"}
+        { title: "A vuestros cuerpos dispersos", author: "Philip J. Farmer"}
+    }
 }
 ```
 
