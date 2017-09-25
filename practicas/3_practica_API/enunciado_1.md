@@ -1,4 +1,4 @@
-# Práctica evaluable 1: Diseño de APIs REST
+# Práctica evaluable 1: Diseño e implementación de APIs REST
 
 El objetivo de esta práctica es aprender a diseñar correctamente APIs REST. Cada uno podéis elegir el dominio que queráis para la aplicación: una tienda, una red social, un sitio de *crowdfunding*,... 
 
@@ -64,13 +64,15 @@ Para poder puntuar estos requisitos es necesario haber implementado correctament
 
 **(2 puntos)** Implementar la persistencia del API con base de datos. Podéis usar para ello la base de datos y las librerías de acceso que queráis. En caso de implementar este apartado no es necesario guardar además los datos en memoria.
 
-**(1 ó 2 puntos)** Implementar el acceso real a un API externo para cumplir con alguna funcionalidad. Por ejemplo supongamos un sitio de búsqueda de hoteles en ciertas fechas que en la ficha de cada hotel incuye el tiempo que va a hacer ese día, obtenido de un API externo. **Si el API externo usa OAUth se podrán obtener hasta 2 puntos, si usa un mecanismo más sencillo, hasta 1**. En este apartado os podéis ayudar de cualquier librería JS/paquete npm.
+**(1 ó 1.5 puntos)** Implementar el acceso real a un API externo para cumplir con alguna funcionalidad. Por ejemplo supongamos un sitio de búsqueda de hoteles en ciertas fechas que en la ficha de cada hotel incuye el tiempo que va a hacer ese día, obtenido de un API externo. **Si el API externo usa OAUth se podrán obtener hasta 1.5 puntos, si usa un mecanismo más sencillo, hasta 1**. En este apartado os podéis ayudar de cualquier librería JS/paquete npm.
 
 **(1 punto)** Documentar el API usando alguna de las herramientas que se comentaron brevemente en clase de teoría, o cualquier otra que conozcáis.
 
 **(1 punto)** Implementar *hipermedia* en el API. Cada caso de uso debería incluir enlaces a las operaciones más significativas relacionadas con el caso de uso actual.
 
 **(1 punto)** Desplegar el API en algún servicio en la *nube* como por ejemplo en Heroku u otro similar.
+
+**(1 punto)** Implementar *paginado* en el API
 
 ## Plazo de entrega
 
