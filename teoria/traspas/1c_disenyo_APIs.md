@@ -14,6 +14,8 @@
 3. Recursos relacionados entre sí
 4. Consultas sobre recursos
 5. Buenas prácticas a nivel técnico
+6. [Hipermedia](#/sect_hipermedia)
+7. [Caches](#/sect_cache)
 
 ---
 
@@ -454,7 +456,7 @@ console.log(uuid())   //176c8ba0-9cb6-11e7-abab-7df31ea5be22
 
 - Cliente -> servidor: cabecera `Accept` en la petición
 
-```language-http
+```http
 Accept: application/json;q=1.0, application/xml;q=0.5, */*;q=0.0
 ```
 
@@ -466,19 +468,170 @@ Accept: application/json;q=1.0, application/xml;q=0.5, */*;q=0.0
 
 ## Cómo se negocia el formato en el "mundo real"
 
-A saber...depende del API:
-
-- Parámetros HTTP
-- Especificado en la URL
-- ...
+- Depende del API:
+ - Parámetros HTTP
+ - Especificado en la URL
+ - ...
 
 ```http
 https://api.twitter.com/1.1/search/tweets.json
-https://api.flickr.com/services?format=XML&...
+https://api.flickr.com/services?format=XML...
 ```
 
 
---- 
+---
+
+<!-- .slide: class="titulo" -->
+<!-- .slide: id="sect_hipermedia" -->
+
+# 7. Hipermedia en APIs REST
+
+
+
+---
+
+## Problema: dependencia de las URL
+
+*   Tal y como hemos implementado hasta ahora los servicios REST, para realizar una operación necesitamos **conocer previamente la URL** del recurso
+*   Esto presenta el problema de que **no podemos modificar las URL** sin "romper" los clientes actuales
+
+---
+
+
+## HATEOAS
+
+**H**ypermedia **A**s **T**he **E**ngine **O**f **A**pplication **S**tate
+
+Imitar el funcionamiento de la web, en la que para seguir los pasos en un flujo de trabajo vamos saltando entre enlaces, sin necesidad de conocer previamente las URL
+
+![](img_1d/amazon.png)
+<!-- .element: class="stretch" -->
+
+---
+
+## Hipermedia en REST
+
+En cada respuesta debemos incluir enlaces con las operaciones posibles y los recursos directamente relacionados
+
+```javascript
+{
+  "id":"1",
+  "items": [
+    {"id":"12", "cantidad":"1"},
+    {"id":"1123", "cantidad":"2"}
+  ]
+  "link": {
+    "rel": "self",
+    "href": "http://miapi.com/pedidos/1"    
+  },
+  "link": {
+    "rel": "items",
+    "href": "http://miapi.com/pedidos/1/items"  
+  },
+  "link": {
+    "rel": "pagar",
+    "href": "http://miapi.com/pagos/pedidos/1"  
+  }
+}
+```
+
+---
+
+<!-- .slide: class="titulo" id="sect_cache" -->
+# 8. Caches
+
+---
+
+## Caches
+
+*   En lugar a volver a generar una respuesta, reutilizar la anterior. Permiten la **escalabilidad** de modo transparente, ya que [forman parte del estándar HTTP](http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html)
+*   Puede haber caches a diferentes niveles
+   *   En la propia aplicación (en nuestro código)
+   *   En el lado del servidor (_reverse proxy cache_)
+   *   En las proximidades del cliente (_forward proxy cache_)
+   *   En el propio navegador
+
+![](img_1c/diagrama_cache.png)
+
+---
+
+## Proxy caches
+
+Software que puede actuar tanto de *reverse* como de *forward*
+
+<div class="row clearfix">
+    <div class="column half">
+      ![](img_1c/Squid-cache_logo.jpg)
+      <div class="caption">Squid</div>
+    </div>
+    <div class="column half">
+      ![](img_1c/ats.jpg)   
+      <div class="caption">Apache Traffic Server</div>
+    </div>
+</div>
+
+---
+
+**Reverse proxy**: para las peticiones que vienen del exterior, el *proxy* es el servidor
+
+<img class="stretch" src="img_1c/reverse-proxy.png">
+
+---
+
+## Cache con expiración
+
+*   En general, la cache de HTTP se controla con **cabeceras** 
+*   En el **modo de expiración** especificamos cuánto tiempo cachear la información (en segundos)
+    *   En HTTP 1.0 se fijaba la "fecha de caducidad" (problemático por la necesaria "sincronización de relojes" entre cliente y servidor)
+    *   Con `private` en lugar de `public` indicaríamos que no se debe cachear en caches compartidas (o sea, solo en la máquina del cliente)
+
+```http
+HTTP/1.1 200 OK
+Content-Type: text/html;charset=utf-8
+Cache-Control: public, max-age=3600
+Expires: Mon, 09 Dec 2013 09:57:27 GMT  #esto es de HTTP/1.0
+Content-Length: 163
+... 
+```
+
+---
+
+## Ejemplo
+
+![](img_1c/cache_expir_1.png)
+
+---
+
+
+## Ejemplo (II)
+
+30 segundos más tarde, petición de otro cliente a la misma URL
+
+![](img_1c/cache_expir_2.png)
+
+---
+
+## Cache con validación
+
+*   No siempre es fácil dar un plazo de "caducidad" para los datos
+*   Alternativa: preguntar en la petición si los datos son más nuevos que la última "versión" que tenemos. ¿Cómo saberlo?
+  *   Por fecha de modificación (cabecera `If-modified-since`)
+  *   Con una "etiqueta de versión": un identificador único para la versión actual de los datos (cabecera `If-none-match`)
+*  **Petición condicional**: si en la petición se incluye fecha de modificación o etiqueta y los datos no han cambiado, la cache responderá con un `304 Not modified` pero no enviará los datos en sí
+
+---
+
+# Ejemplo con validación (I)
+
+![](img_1c/cache_valid_1.png)
+
+---
+
+# Ejemplo con validación (II)
+
+![](img_1c/cache_valid_2.png)
+
+---
 
 <!-- .slide: class="titulo" -->
 
