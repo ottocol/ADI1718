@@ -225,7 +225,7 @@ Además del lenguaje de consulta hay una sintaxis para definir el **esquema** de
 
 - [Esquema](https://github.com/kadirahq/graphql-blog-schema/blob/master/src/schema.js)
   * Recursos: `Post`, `Category`, `Author`, `Comment` 
-  * Relaciones:  `Post->Category(1:1)`, `Post->Comment(1:N)`, `Post->Author(1:1)`, `Comment->Author(1:N)`
+  * Relaciones:  `Post->Category(1:1)`, `Post->Comment(1:N)`, `Post->Author(N:1)`, `Comment->Author(N:1)`
 
 ---
 
