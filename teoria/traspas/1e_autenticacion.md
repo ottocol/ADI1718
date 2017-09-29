@@ -1,6 +1,6 @@
 
-<!-- .slide: data-background="rgb(92,218,133)" -->
-# Tema 4:
+<!-- .slide: class="titulo" -->
+# Tema 1, parte 5
 # Autenticación en APIs REST
 
 ---
@@ -14,8 +14,8 @@
 
 ---
 
-<!-- .slide: data-background="rgb(92,218,133)" -->
-# Autenticación con sesiones
+<!-- .slide: class="titulo" -->
+# 1. Autenticación con sesiones
 
 ---
 
@@ -31,7 +31,7 @@
 - Extensión al protocolo HTTP que permite al cliente almacenar datos "persistentes" entre ciclos petición/respuesta
 - Son pares clave=valor
 - Típicamente se crean a petición del servidor
-- Las almacena el cliente pero las envía al servidor en cada petición
+- Las **almacena el cliente** pero se las envía al servidor en cada petición
 
 
 ---
@@ -39,7 +39,7 @@
 ## Mantenimiento de sesiones con cookies
 
 - Casi todos los _frameworks_ de programación del servidor pueden generar automáticamente **cookies con valores pseudoaleatorios** lo bastante largas para ser usadas como "id de sesión" con cierta seguridad (==difícil generar maliciosamente una que coincida con una sesión activa)
-- Esto permite almacenar datos en el servidor exclusivos de cada usuario. El "id de sesión" sirve como "clave" para recuperar los datos
+- Esto permite **almacenar datos en el servidor** exclusivos de cada usuario. El "id de sesión" sirve como "clave" para recuperar los datos
 
 ---
 
@@ -50,7 +50,8 @@
 
 ## API de sesiones
 
-En casi todos los _frameworks web_ las cookies de sesión son transparentes al desarrollador. Se nos da un API mediante el que podemos almacenar/recuperar objetos en la "sesión", una especie de BD privada de cada usuario, guardada en el servidor
+- En casi todos los _frameworks web_ las cookies de sesión son transparentes al desarrollador
+- El API permite almacenar/recuperar objetos en la "sesión", una especie de BD privada de cada usuario, guardada en el servidor
 
 ![](img_1e/sesiones_bd.jpg)
 
@@ -66,16 +67,17 @@ var app = express();
 app.use(session({secret:'123456'}));
 
 //Ejemplo tonto de uso de sesiones. No es un API REST
-//hacemos p.ej. add?dato=1 y lo va añadiendo a una lista de números
-app.post('/add', function(pet, resp) {
-    var dato = parseInt(pet.query.dato);
-    if (!isNan(dato)) {
-        if (!pet.session.datos)      
-            pet.session.datos = [];
-        pet.session.prods.push(dato); //añadimos
-        console.log(pet.session.datos);
-        resp.send("Añadido " + dato);
+//hacemos p.ej. add?palabra=hola y lo va añadiendo a una lista de palabras
+app.get('/add', function(pet, resp) {
+    var palabra = pet.query.palabra
+    if (palabra) {
+        if (!pet.session.palabras)     
+            pet.session.palabras= [];
+        pet.session.palabras.push(palabra)
+        resp.send("Ahora las palabras son: " + pet.session.palabras)
     }
+    else
+        resp.status(400).send('Falta el parámetro "palabra"')
 })
 ```
 
@@ -86,39 +88,59 @@ app.post('/add', function(pet, resp) {
 Tras hacer login correctamente, guardamos en la sesión un dato indicando que el cliente se ha autentificado OK. Si no está en la sesión, no se ha autentificado
 
 ```javascript
-app.post('/doLogin', function(pet, resp) {
-   if (pet.query.login=='usuario' && pet.query.password=='123456') {
-        pet.session.usuarioActual = {login: pet.query.login};
-        resp.send("Login OK");
-   }
-   else {
-        resp.status(401);
-        resp.send("login y/o password incorrecto");
-   }
-});
+var express = require('express');
+var session = require('express-session');
 
-app.get('/doLogout', function(pet, resp) {
-    pet.session.destroy();
-    resp.send("logout");
-});
+var app = express();
+app.use(session({secret:'123456'}));
 
-app.get('/restringido', function(pet, resp) {
-    if (pet.session.usuarioActual)
-        resp.send("OK, tienes permiso");
-    else {
-        resp.status(401);
-        resp.send("Debes autentificarte");
+
+app.get('/doLogin', function(pet, resp) {
+    if (pet.query.login=='pepe' && pet.query.password=='123456') {
+         pet.session.usuarioActual = {login: pet.query.login};
+         resp.send("Login OK");
     }
-});
+    else {
+         resp.status(403);
+         resp.send("login y/o password incorrecto");
+    }
+ });
+ 
+ app.get('/doLogout', function(pet, resp) {
+     pet.session.destroy();
+     resp.send("logout");
+ });
+ 
+ app.get('/restringido', function(pet, resp) {
+     if (pet.session.usuarioActual)
+         resp.send("OK, tienes permiso");
+     else {
+         resp.status(401);
+         resp.send("Debes autentificarte");
+     }
+ });
+
+ app.listen(3000, function() {
+     console.log("Servidor express iniciado")
+ })
 ```
 
 ---
 
-Express hace sencillo modularizar el chequeo de autenticación
+Con Express se puede *modularizar* el chequeo de autenticación mediante *middleware*: funciones que se pueden ejecutar antes del manejador de la petición HTTP.
+
+![](img_1e/pipeline.png)
+
+---
+
+## *Middleware* para autenticación en Express
 
 ```javascript
+//función que actúa de middleware
 function checkAuth(pet, resp, next) {
     if (pet.session.usuarioActual)
+        //next es el siguiente middleware de la cadena, 
+        //o el manejador de la petición
         next();
     else {
         resp.status(401);
@@ -137,26 +159,27 @@ app.get('/restringido2', checkAuth, function(pet, resp) {
 ## A favor de las sesiones
 
 *   Las sesiones basadas en _cookies_ vienen ya implementadas en la mayoría de plataformas de desarrollo web en el servidor
-*   Si alguien intercepta la comunicación, es mucho más sencillo invalidar la sesión que obligar al usuario a cambiar el password
+*   Si alguien intercepta la comunicación, es sencillo invalidar la sesión 
 
 ---
 
 ## En contra de las sesiones
 
-En teoría un servidor REST **no debería guardar nada de estado entre peticiones**
+- **Escalabilidad**: es mucho más fácil escalar una app con servidores *stateless*. Al cliente no le importa qué instancia sirva las peticiones, podemos redirigirlas, poner en marcha nuevos servidores, "tirar" los que ya hay, etc.
+- "filosofía" REST: el API no debe recordar el estado, el estado actual se transfiere con cada petición
 
 ---
 
-<!-- .slide: data-background="rgb(92,218,133)" -->
-# Autenticación con HTTP Basic
+<!-- .slide: class="titulo" -->
+# 2. Autenticación con HTTP Basic
 
 ---
 
 ## HTTP Basic
 
-- Mecanismo estándar de autenticación en HTTP
-- Como HTTP **no tiene estado**, hay que enviar las credenciales **en cada petición**
-- Se envía login y password en Base64 (=¡sin cifrar!), separados por ":" dentro de la cabecera `Authorization`
+- Mecanismo **estándar** de autenticación en HTTP
+- Como HTTP **no tiene estado** hay que enviar las credenciales **en cada petición**. 
+- Se envía login y password en Base64 (==¡sin cifrar!), separados por ":" dentro de la cabecera `Authorization`
 
 ```http
 Authorization: Basic cGVwaXRvOjEyMzQ1Ng==
@@ -166,7 +189,7 @@ Authorization: Basic cGVwaXRvOjEyMzQ1Ng==
 
 ## HTTP Basic (2)
 
-*   Si se intenta acceder a un recurso protegido sin cabecera `Authorization`, el servidor responde con un _status_ 401 y una cabecera `WWW-Authenticate`
+Cuando se intenta acceder a un recurso protegido sin cabecera `Authorization`, el servidor responde con un _status_ 401 y una cabecera `WWW-Authenticate`
 
 ```http
 401 UNAUTHORIZED HTTP/1.1
@@ -180,24 +203,27 @@ Cuando el navegador recibe un `401` + cabecera `WWW-Authenticate` hace que "salt
 
 ![](img_1e/ventana_login.png)
 
+Si no queremos que aparezca, habrá que "saltarse" el estándar (*status* distinto de 401 o obbiar la cabecera `WWW-Authenticate`)
+
 ---
 
 
 ## A favor de HTTP Basic
 
-- Estándar HTTP, funciona _out-of-the-box_
-- Es RESTful, no obliga a mantener estado en el servidor
+- **Estándar** HTTP
+- Sencillo de implementar
+- Es **stateless**, no obliga a mantener estado en el servidor
 
 ---
 
 ## En contra de HTTP Basic
 
-- Login y password se transmiten sin cifrar. Por tanto hay que usar **HTTPs**. Una mejora es **HTTP Digest**, que hace un _hash_ MD5 de los datos.
-- Un fallo de seguridad implica que hay que cambiar el *password*
+- Login y password se transmiten sin cifrar. Por tanto hay que usar **HTTPS**. Una mejora es **HTTP Digest**, que hace un _hash_ MD5 de los datos.
+- Si se intercepta la comunicación sin HTTPS, hay que cambiar el *password*
 
 ---
-<!-- .slide: data-background="rgb(92,218,133)" -->
-# Autenticación con *tokens*
+<!-- .slide: class="titulo" -->
+# 3. Autenticación con *tokens*
 
 ---
 
@@ -206,7 +232,7 @@ Cuando el navegador recibe un `401` + cabecera `WWW-Authenticate` hace que "salt
 1.  Cuando se hace login correctamente el servidor nos devuelve un **token** (valor idealmente único e imposible de falsear)
 2.  A partir de este momento para cualquier operación restringida debemos enviar el token en la petición
 
-Similar a HTTP Basic pero se está enviando un dato no tan crítico
+Similar a HTTP Basic pero no se está enviando un dato tan crítico como el *password*
 
 ---
 
@@ -286,9 +312,9 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 - El dominio del servicio de autenticación puede ser distinto al del API
 
 ---
-<!-- .slide: data-background="rgb(92,218,133)" -->
+<!-- .slide: class="titulo" -->
 
-#OAuth
+#4. OAuth
 
 
 ---
@@ -332,5 +358,5 @@ POST graph.facebook.com/{user-id}/feed?message={message}&access_token={access-to
 
 ---
 
-<!-- .slide: data-background="rgb(92,218,133)" -->
+<!-- .slide: class="titulo" -->
 # ¿Preguntas...?
