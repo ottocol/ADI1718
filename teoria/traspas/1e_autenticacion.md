@@ -203,7 +203,7 @@ Cuando el navegador recibe un `401` + cabecera `WWW-Authenticate` hace que "salt
 
 ![](img_1e/ventana_login.png)
 
-Si no queremos que aparezca, habrá que "saltarse" el estándar (*status* distinto de 401 o obbiar la cabecera `WWW-Authenticate`)
+Si no queremos que aparezca, habrá que "saltarse" el estándar (*status* distinto de 401 u obviar la cabecera `WWW-Authenticate`)
 
 ---
 
