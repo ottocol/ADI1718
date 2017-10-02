@@ -159,14 +159,22 @@ app.get('/restringido2', checkAuth, function(pet, resp) {
 ## A favor de las sesiones
 
 *   Las sesiones basadas en _cookies_ vienen ya implementadas en la mayoría de plataformas de desarrollo web en el servidor
-*   Si alguien intercepta la comunicación, es sencillo invalidar la sesión 
+*   Es sencillo invalidar la sesión para hacer *logout* o si se detecta que se intercepta la comunicación 
 
 ---
 
 ## En contra de las sesiones
 
-- **Escalabilidad**: es mucho más fácil escalar una app con servidores *stateless*. Al cliente no le importa qué instancia sirva las peticiones, podemos redirigirlas, poner en marcha nuevos servidores, "tirar" los que ya hay, etc.
-- "filosofía" REST: el API no debe recordar el estado, el estado actual se transfiere con cada petición
+**Escalabilidad**: es mucho más fácil escalar una app con servidores *stateless*. Al cliente no le importa qué instancia sirva las peticiones, podemos redirigirlas, arrancar nuevos servidores, parar los que ya hay, etc.
+
+![](img_1e/SimpleStateless.png)
+
+
+---
+
+## En contra de las sesiones
+
+"filosofía" **REST**: el API no debe recordar el estado, el estado actual se *transfiere* con cada petición
 
 ---
 
@@ -179,17 +187,34 @@ app.get('/restringido2', checkAuth, function(pet, resp) {
 
 - Mecanismo **estándar** de autenticación en HTTP
 - Como HTTP **no tiene estado** hay que enviar las credenciales **en cada petición**. 
-- Se envía login y password en Base64 (==¡sin cifrar!), separados por ":" dentro de la cabecera `Authorization`
+- Se envía **login** y **password** en Base64 (==¡sin cifrar!), separados por ":" dentro de la cabecera `Authorization`
 
 ```http
 Authorization: Basic cGVwaXRvOjEyMzQ1Ng==
 ```
 
+
 ---
 
-## HTTP Basic (2)
+¿De verdad cada vez que se realice una operación protegida el usuario tiene que introducir login y password?
 
-Cuando se intenta acceder a un recurso protegido sin cabecera `Authorization`, el servidor responde con un _status_ 401 y una cabecera `WWW-Authenticate`
+![](http://i0.kym-cdn.com/entries/icons/original/000/002/758/areyoufucking.jpg)
+
+---
+
+## HTTP Basic en una *app*. Qué ve el usuario final
+
+1. El usuario introduce *login* y *password* en un formulario, y se hace una llamada al API simplemente para **comprobar que son correctos** (el API debería ofrecer esta operación)
+    - Si son OK, se **almacenan en el navegador**
+    - Si son incorrectos se muestra error
+2. Como las credenciales están almacenadas en el navegador, con Javascript podemos adjuntarlas en cada petición al API
+
+---
+
+
+## Intento de acceso sin credenciales
+
+Cuando se intenta acceder a un recurso protegido sin `Authorization`, el servidor debería responder con un _status_ 401 y una cabecera `WWW-Authenticate`
 
 ```http
 401 UNAUTHORIZED HTTP/1.1
@@ -222,6 +247,7 @@ Si no queremos que aparezca, habrá que "saltarse" el estándar (*status* distin
 - Si se intercepta la comunicación sin HTTPS, hay que cambiar el *password*
 
 ---
+
 <!-- .slide: class="titulo" -->
 # 3. Autenticación con *tokens*
 
@@ -229,10 +255,18 @@ Si no queremos que aparezca, habrá que "saltarse" el estándar (*status* distin
 
 ## Tokens
 
-1.  Cuando se hace login correctamente el servidor nos devuelve un **token** (valor idealmente único e imposible de falsear)
-2.  A partir de este momento para cualquier operación restringida debemos enviar el token en la petición
+1.  Cuando se hace *login* el servidor nos devuelve un **token** (valor idealmente único e imposible de falsear)
+2.  Para cualquier operación restringida debemos **enviar el token en la petición**
 
-Similar a HTTP Basic pero no se está enviando un dato tan crítico como el *password*
+<div class="stretch">![](https://media2.wnyc.org/i/800/0/l/80/1/2003_44_2_SubwayToken_verso.jpg)</div>
+<div class="caption"> Un *token* en el mundo real</div>
+
+---
+
+Similar a las *cookies* ya que estamos enviando un identificador del cliente en cada petición, pero los *tokens*:
+
+- No los gestiona el navegador automáticamente
+- No identifican ningún dato de sesión en el servidor, este es *sin estado*
 
 ---
 
@@ -242,29 +276,28 @@ Similar a HTTP Basic pero no se está enviando un dato tan crítico como el *pas
 *   Es una cadena formada por 3 partes:
     1.  **Cabecera**: indica el tipo de token y el algoritmo de firma. Se codifica en Base64\. Ejemplo: `{"typ"=>"JWT", "alg"=>"HS256"}` (indica que esto es un "JWT" y se firmará con HMAC SHA-256)
     2.  **Payload**: lo que queremos almacenar en el token en formato JSON (p.ej. `{"login"=>"adi"}`) y codificado en Base64URL
-    3.  **Firma**: se aplica un algoritmo de _hash_ sobre la cabecera, el payload y una clave secreta y se pasa a Base64URL
+    3.  **Firma**: se aplica un algoritmo de _hash_ sobre la cabecera, el payload y una clave secreta que solo conoce el servidor y se pasa a Base64URL
     4.  Las tres partes se concatenan con '.'
 
 ```bash
-    eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJob2xhIjoibXVuZG8ifQ.pJPDprjxsouVfaaXau-Fyspj6rpKc7_hCui1RSaERAE    
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJob2xhIjoibXVuZG8ifQ.pJPDprjxsouVfaaXau-Fyspj6rpKc7_hCui1RSaERAE    
 ```
 
 
 ---
 
-## Comprobar un JWT
+## Comprobar si un JWT es auténtico
 
-*   Se vuelve a aplicar el _hash_ sobre la cabecera y el _payload_ (más la clave secreta). Si no coincide con la firma, el token no es válido.
-*   En teoría no se puede generar un token falso si no se conoce la clave secreta, y esta no se puede averiguar a partir de un token auténtico
+*   Se vuelve a aplicar el _hash_ sobre la cabecera, el _payload_ y la clave secreta). Si no coincide con la firma, el token no es válido.
+*   En teoría no se puede generar un token si no se conoce la clave secreta, y esta no se puede averiguar a partir de un token auténtico
 *   Cuidado, **todo se transmite "en claro"**: Base64 es una codificación, no un cifrado. Por tanto normalmente habrá que usar HTTPS si no se quiere que el _payload_ sea legible
 
 ---
 
 ## Fecha de expiración
 
-*   En el _payload_ se suele incluir una fecha de expiración del _token_. En el estándar se especifica el uso de `exp` (con el nº segundos desde el 1/1/1970)
-
-*   De paso solucionamos el problema de que el mismo _payload_ siempre genera el mismo JWT si no cambiamos el _secret_
+* En el _payload_ se suele incluir una fecha de expiración del _token_. En el estándar se especifica el uso de `exp` (con el nº segundos desde el 1/1/1970). Si el *token* ya ha expirado el servidor debería devolver el *status* 401
+* De paso solucionamos el problema de que el mismo _payload_ siempre genera el mismo JWT si no cambiamos el _secret_ (lo que permitiría generar *tokens* falsos)
 
 ---
 
@@ -272,7 +305,7 @@ Similar a HTTP Basic pero no se está enviando un dato tan crítico como el *pas
 
 ```javascript
 var jwt = require('jwt-simple');
-var moment = require('moment');
+var moment = require('moment');  //para trabajar cómodamente con fechas
 
 var payload = {
     login: 'pepito',
@@ -281,23 +314,36 @@ var payload = {
 
 var secret='123456';
 
+//crear el JWT a partir de payload + secret
 var token = jwt.encode(payload, secret);
 console.log(token);
 
+//validar el JWT. "decode" comprueba que sea válido y nos devuelve el payload
 var decoded = jwt.decode(token, secret);
-console.log(decoded);
+if (decoded) {
+  console.log("¡¡Token válido!!. Payload: " + decoded);
+}
+//en realidad el payload se puede sacar decodificando Base64
+//lo importante del método "decode" es que chequea la firma
+console.log(new Buffer(token, "Base64").toString('ascii'))
+
+//si manipulamos un JWT e intentamos hacer un decode se lanzará una excepción
+var tokenManipulado = token+"a"
+try {
+  jwt.decode(tokenManipulado, secret)
+} catch (error) {
+  console.log(error)
+}
 ```
 
-[http://code.runnable.com/V_wah6h2n6cXX0cP/prueba-jwt-for-node-js](http://code.runnable.com/V_wah6h2n6cXX0cP/prueba-jwt-for-node-js)
+<div class="caption">[https://runkit.com/ottocol/ejemplo-jwt](https://runkit.com/ottocol/ejemplo-jwt)</div>
 
 ---
 
-## ¿Dónde viaja el JWT?
+## "Flujo" de uso de JWT
 
-*   **Del servidor al cliente**, al ser generado: no hay un estándar. Por ejemplo, en el cuerpo de la respuesta
-*   **Del cliente al servidor** para autentificarse:
-    *   En HTTP para enviar credenciales se usa la cabecera `Authorization`
-    *   Por semejanza con OAuth, que emplea el concepto de "bearer token", se usa el formato
+1. El **cliente presenta** las credenciales (normalmente **login+password**) al servidor y a cambio obtiene un token JWT. En el estándar no se especifica en qué parte de la petición/respuesta colocar la información. Puede ser p.ej. en el cuerpo, en formato JSON
+2. En **cada operación restringida hay que enviar el JWT**. Se debería hacer en la cabecera `Authorization`. Se pone la palabra clave `Bearer` seguida del JWT.
 
 ```http
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
@@ -305,16 +351,31 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 
 ---
 
+## JWT en una app para el usuario final
+
+1. El usuario introduce su *login* y *password* en un formulario, y se hace una llamada al servidor para **obtener un *token***. Es decir, el API debe implementar esta operación. 
+   - Si es OK, El JWT se almacena en el navegador (también podemos almacenar *login* y *password*)
+2. **Con cada llamada** "protegida" al API **adjuntamos el *token***
+  - Si el *token* no es correcto o ha expirado, el servidor devolverá `401`. En caso de expiración, si teníamos almacenado *login/password* la *app* puede pedir un nuevo JWT de manera transparente al usuario
+
+---
 
 ## A favor de los *tokens*
+
+Con respecto a HTTP Basic
+
+- En caso de información comprometida, es mucho menos engorroso invalidar un *token* que hacer que el usuario cambie su *password*
+
+Con respecto a las *cookies*
 
 - Se pueden usar también en aplicaciones nativas (p.ej. móviles)
 - El dominio del servicio de autenticación puede ser distinto al del API
 
 ---
+
 <!-- .slide: class="titulo" -->
 
-#4. OAuth
+# 4. OAuth
 
 
 ---
@@ -324,8 +385,18 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 - Protocolo de autenticación usado cuando nuestra aplicación quiere acceder al API de un tercero pero el usuario no está dispuesto a confiarnos su *password*
 - Solución: el usuario se autentifica directamente con el API del tercero y este nos cede un *token*, válido durante un tiempo. Si hay problemas es mucho más sencillo anular el *token* que cambiar el password
 
-![](img_1e/oauth-twitter-3-legs.png)
-<!-- .element class="stretch" -->
+<div class="stretch">![](img_1e/oauth-twitter-3-legs.png)</div>
+
+
+
+---
+
+## ¿OAuth vs. JWT?
+
+En realidad no son comparables. OAuth es un *protocolo* que indica cómo se deben comunicar cliente/servidor en el proceso de autenticación, JWT es un *mecanismo* de autenticación. 
+
+De hecho, en OAuth podemos usar JWT.
+
 
 ---
 
@@ -341,7 +412,13 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 
 Como condición previa debemos tener una app dada de alta en FB como desarrolladores. Dicha app tiene un id único.
 
-Ejemplo del denominado *implicit flow* según OAuth 2
+Ejemplo del denominado *implicit grant* según OAuth 2
+
+![](implicit_grant.png)
+
+
+---
+
 
 [Documentación de FB](https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow)
 
@@ -352,7 +429,9 @@ Ejemplo del denominado *implicit flow* según OAuth 2
 4. Para cualquier petición al API se debe usar un parámetro HTTP `access_token` con el *token* obtenido. Por ejemplo
 
 ```http
+//ver información sobre mi
 GET https://graph.facebook.com/me?access_token={lo_que_sea}
+//enviar un mensaje a mi muro
 POST graph.facebook.com/{user-id}/feed?message={message}&access_token={access-token}
 ```
 
