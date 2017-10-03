@@ -325,7 +325,7 @@ if (decoded) {
 }
 //en realidad el payload se puede sacar decodificando Base64
 //lo importante del método "decode" es que chequea la firma
-console.log(new Buffer(token, "Base64").toString('ascii'))
+console.log(Buffer.from(token, "Base64").toString('ascii'))
 
 //si manipulamos un JWT e intentamos hacer un decode se lanzará una excepción
 var tokenManipulado = token+"a"
