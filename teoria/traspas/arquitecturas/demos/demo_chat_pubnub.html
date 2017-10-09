@@ -1,0 +1,43 @@
+<html>
+<head>
+ <meta charset="utf-8">
+</head>
+<body>
+  <h2>Enviar mensaje</h2>
+  De: <br> <input type="text" id="nick" value="anonimo"> <br>
+  Mensaje: <br> <textarea id="mensaje"></textarea> <br>
+  <input type="button" id="boton_enviar" value="enviar">
+  <h2>Mensajes</h2>
+  <div id="lista_mensajes">
+  </div>  
+  <script src="https://cdn.pubnub.com/pubnub.min.js"></script>
+  <script>
+     function mostrarMensaje(nick, texto) {
+        
+     }
+  
+  	var demo = PUBNUB.init({
+  		publish_key:'pub-c-f8244640-cae9-41ef-baa8-d09fb859de53',
+  		subscribe_key: 'sub-c-85f4ee00-9a28-11e6-8384-0619f8945a4f'
+  	})
+    
+    document.getElementById('boton_enviar').addEventListener('click', function(){
+      var nick = document.getElementById('nick').value
+      var mensaje = document.getElementById('mensaje').value
+      demo.publish({
+        channel: "demo_ADI",
+        message: {nick: nick, texto: mensaje} 
+      })
+    });
+
+    demo.subscribe({
+      channel: "demo_ADI",
+      message: function(mensaje){
+        var htmlMensaje = '<b>' +  mensaje.nick + '</b>: ' + mensaje.texto + '<br>'
+        document.getElementById('lista_mensajes').insertAdjacentHTML('beforeend', htmlMensaje)
+      }
+    })
+  
+  </script>
+</body>
+</html>
