@@ -1,0 +1,36 @@
+<html>
+<head>
+ <meta charset="utf-8">
+</head>
+<body>
+  <h1>Registro de nuevo usuario</h1>
+  <p>Prueba de registro de nuevo usuario con el BaaS Kinvey</p>
+<form>
+  <label for="usuario">Usuario:</label><input type="text" id="usuario"> <br>
+  <label for="password">Contraseña:</label><input type="password" id="password"> <br>
+  <label for="email">email:</label><input type="text" id="email"> <br>
+  
+  <input type="button" id="registro" value="Registrarse"> 
+</form>  
+<script src="https://da189i1jfloii.cloudfront.net/js/kinvey-html5-sdk-3.2.1.min.js"></script>
+<script>
+  Kinvey.init({
+    appKey: 'kid_BkwqGI8yl',
+    appSecret: 'd691621cb525482a8cecb6d07e5fcd2e'
+  })
+  document.getElementById('registro').addEventListener('click', function(){
+   var datos = {
+     username: document.getElementById('usuario').value,
+     password: document.getElementById('password').value,
+     email: document.getElementById('email').value
+   }
+   Kinvey.User.signup(datos).then(function(){
+      alert('gracias por registrarte')
+   }).catch(function(error){
+      alert('ha habido algún problema en el registro')
+      console.log(error)
+   })
+ })
+</script>    
+</body>
+</html>
