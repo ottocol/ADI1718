@@ -18,8 +18,9 @@
   
   	var demo = PUBNUB.init({
   		publish_key:'pub-c-f8244640-cae9-41ef-baa8-d09fb859de53',
-  		subscribe_key: 'sub-c-85f4ee00-9a28-11e6-8384-0619f8945a4f'
-  	})
+  		subscribe_key: 'sub-c-85f4ee00-9a28-11e6-8384-0619f8945a4f',
+      ssl : (('https:' == document.location.protocol) ? true : false)
+    })
     
     document.getElementById('boton_enviar').addEventListener('click', function(){
       var nick = document.getElementById('nick').value
