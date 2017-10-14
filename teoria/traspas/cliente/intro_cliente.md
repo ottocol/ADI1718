@@ -1,29 +1,30 @@
 class: titulo, middle
 
-# Desarrollo en el lado del cliente
-# Tema 8: La interfaz de usuario
+## Tema 3: Desarrollo en el cliente con Javascript estándar 
+## Parte 1: Introducción. Eventos. Manipulación del HTML
 
 
 ---
 
 class: titulo, middle
 
-## 8.1 
-## Introducción a Javascript en el cliente
+## 3.1 
+## Javascript en el cliente: conceptos básicos
 
 ---
 
-## Versiones de Javascript en el cliente
+## Versiones de JS en el navegador
 
-- La versión actualmente **soportada al 100%** por los navegadores es la 5, también denominada **ES5**.
 
---
-
-- Los navegadores actuales implementan [parcialmente](http://kangax.github.io/compat-table/es6/) algunas funcionalidades de la siguiente versión, **ES6**, ahora rebautizada como ES2015.
+- Los navegadores actuales implementan [**casi en su totalidad**](http://kangax.github.io/compat-table/es6/) la versión 6 de JS (también llamada **ES6**, o ES2015)
 
 --
 
-- Como solución al problema del soporte parcial se han desarrollado *transpiladores*, que traducen Javascript ES6 a ES5. Esto nos permite programar en ES6 en los navegadores actuales. El transpilador más usado actualmente es [Babel](https://babeljs.io/)
+- No obstante **hay elementos importantes todavía no soportados**, por ejemplo los **módulos**
+
+--
+
+- Como solución al soporte parcial se usan ***transpiladores***, que traducen Javascript ES6 a ES5  (sí soportado al 100%). Esto nos permite programar en ES6 con compatibilidad "asegurada". El transpilador más usado actualmente es [**Babel**](https://babeljs.io/)
 
 ---
 
@@ -82,7 +83,7 @@ Con *scripts* externos podemos usar los atributos  `defer` o `async`
 
 class: titulo, middle
 
-## 8.2 
+## 3.2 
 ## Eventos
 
 
@@ -90,11 +91,11 @@ class: titulo, middle
 
 ## Eventos y *listeners*
 
-Casi todo el código Javascript incluido en un HTML se va a ejecutar de modo *asíncrono*, en respuesta a **eventos**
+- Casi todo el código Javascript incluido en un HTML se va a ejecutar de modo ***asíncrono***, en respuesta a **eventos**
 
-Los eventos pueden responder directamente a *acciones* del usuario (p.ej. `click` con el ratón) o bien a *sucesos* "externos" (p. ej. la página ha acabado de cargarse). 
+- Los eventos pueden responder directamente a *acciones* del usuario (p.ej. `click` con el ratón) o bien a *sucesos* "externos" (p. ej. la página ha acabado de cargarse). 
 
-A **cada evento le podemos asociar una o más funciones JS** que se ejecutarán cuando se dispare. Genéricamente esto se conoce como *callbacks*. En el contexto de eventos, son llamados *listeners* 
+- A **cada evento le podemos asociar una o más funciones JS** que se ejecutarán cuando se dispare. Genéricamente esto se conoce como *callbacks*. En el contexto de eventos, son llamados *listeners* 
 
 ---
 
@@ -161,7 +162,7 @@ var boton = document.getElementById('miBoton')
 boton.onclick = function() {
     console.log('has hecho click')
 } 
-//EEEHHH, este handler SUSTITUIRÁ al anterior!!!
+//CUIDADO, este handler SUSTITUIRÁ al anterior!!!
 boton.onclick = function() {
     alert('has hecho click')
 } 
@@ -193,7 +194,7 @@ Tiene "mala prensa" porque mezcla JS y HTML
 
 class: titulo, middle
 
-## 8.3
+## 3.3
 ## Manipulación del HTML
 
 ---
