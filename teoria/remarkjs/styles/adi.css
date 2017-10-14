@@ -1,0 +1,41 @@
+
+.remark-slide-content h1,
+.remark-slide-content h2,
+.remark-slide-content h3 {
+  font-family: 'ChunkFive';
+  letter-spacing: 0.03em;
+  color: rgb(92,218,133);
+}
+
+.titulo h2 {
+  font-size: 2.5em;
+}
+
+.titulo h1 {
+  font-size: 3em;
+}
+
+p:has(img) {
+  background-color: red;
+}
+
+.remark-slide-content {
+  font-family: "Helvetica", sans-serif;
+  font-size: 1.6em;
+  font-weight: lighter;
+  padding: 1em 1em 1em 1em
+}
+
+.remark-slide-number {
+  font-size: 0.1em
+}
+
+.titulo {
+  background-color: rgb(92,218,133);
+}
+
+.titulo h1,
+.titulo h2,
+.titulo h3 {
+  color: white;
+}
