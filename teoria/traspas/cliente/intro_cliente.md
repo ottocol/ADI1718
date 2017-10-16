@@ -20,19 +20,25 @@ class: titulo, middle
 
 --
 
-- No obstante **hay elementos importantes todavía no soportados**, por ejemplo los **módulos**
+- No obstante **hay funcionalidades importantes todavía no soportadas**, por ejemplo los **módulos**
 
---
 
-- Como solución al soporte parcial se usan ***transpiladores***, que traducen Javascript ES6 a ES5  (sí soportado al 100%). Esto nos permite programar en ES6 con compatibilidad "asegurada". El transpilador más usado actualmente es [**Babel**](https://babeljs.io/)
+---
+
+## Transpilación ES6->ES5
+
+- Como solución al soporte parcial de ES6 se usan compiladores (*[transpiladores](https://en.wikipedia.org/wiki/Source-to-source_compiler)*) que **traducen Javascript ES6 a ES5**  (sí soportado al 100% nativamente). Así podemos desarrollar en ES6 con compatibilidad "asegurada". 
+- El transpilador más usado actualmente es [**Babel**](https://babeljs.io/)
 
 ---
 
 background-image:url(images/sebmck.png)
 
+Sebastian McKenzie, *lead developer* de Babel
+
 ???
 
-Como curiosidad decir que Babel lo empezó a escribir un chaval de 17 años mientras estaba en el instituto, un tal Sebastian McKenzie, ahora trabajando en FB. El propio Sebastian cuenta la historia de esta época [aquí](https://medium.com/@sebmck/2015-in-review-51ac7035e272#.1vfchy3bc) 
+Como curiosidad decir que Babel lo empezó a escribir un chaval de 17 años mientras estaba en el instituto, un tal Sebastian McKenzie, ahora trabajando en Facebook. El propio Sebastian cuenta la historia de esta época [aquí](https://medium.com/@sebmck/2015-in-review-51ac7035e272#.1vfchy3bc) 
 
 ---
 
@@ -73,10 +79,64 @@ Por defecto al cargar un *script* se interrumpe la carga del HTML hasta que se a
 
 ![](images/script_default.png)
 
-Con *scripts* externos podemos usar los atributos  `defer` o `async`
+Con *scripts* externos podemos usar los atributos  `defer` (izq.) o `async` (der.)
 
 .left[![Async](images/script_defer.png)]
 .right[![Defer](images/script_async.png)]
+
+
+---
+
+## Módulos ES6
+
+JAVASCRIPT:
+
+```javascript
+//archivo modulo_saludo.js
+function saludar(nombre) {
+  return "Hola qué tal, " +  nombre
+}
+export {saludar}
+```
+
+```javascript
+//archivo main.js
+import {saludar} from './modulo_saludo.js'
+console.log(saludar('Pepe'))
+```
+
+HTML:
+
+```html
+<script type="module" src="main.js"></script>
+```
+
+
+---
+
+## Soporte módulos ES6 en navegadores
+
+A fecha de hoy (octubre 2017) la mayoría de navegadores no los implementan
+
+![:scale 95%](images/caniuse_modules.png)
+
+
+---
+
+## Bundlers
+
+- Herramientas que a partir de un conjunto de módulos resuelven las dependencias y **concatenan todo el código en un único .js** que el navegador puede cargar con un simple `<script src="">`
+- Normalmente el *bundler* permite operaciones adicionales como:
+  * Transpilar el código de ES6 a ES5
+  * *minificar* el código
+  * copiar los *assets* (jpg, png, ...)
+  * ...
+- Ejemplos: webpack, jspm, browserify
+
+
+---
+
+background-image:url(images/bundler.png)
 
 
 ---
@@ -127,8 +187,9 @@ function miListener(evento) {
           + evento.clientX + ',' + evento.clientY)
 }
 var boton = document.getElementById('miBoton')
+//cuando se haga click sobre el objeto "boton", se llamará a "miListener"
 boton.addEventListener('click', miListener)
-//Definimos el nuevo listener sobre la marcha, como una función anónima
+//Otra forma: definimos el listener como una función anónima
 boton.addEventListener('click', function() {
    console.log('no espíes la terminal ehhh')
 })
@@ -283,9 +344,9 @@ $('img')                 //Muy similar a document.querySelectorAll('img')
 
 ---
 
-## Modificar los nodos
+## Modificar/crear nodos
 
-La idea de modificar los nodos para que cambie el HTML es muy **potente**, pero el API es **tedioso** de utilizar
+La idea de modificar los nodos o crear otros nuevos para que cambie el HTML es muy **potente**, pero el API es **tedioso** de utilizar
 
 
 ```javascript
@@ -370,6 +431,8 @@ class: titulo, middle
 
 ---
 
+## Concatenar cadenas == el Infierno
+
 Con `innerHTML` o `insertAdjacentHTML`  acabamos concatenando cadenas que mezclan confusamente HTML+JS
 
 ```javascript
@@ -377,9 +440,12 @@ document.getElementById('miDiv').innerHTML = '<p> Bienvenido, ' +
     nombre + '</p> <a href="profile?user=' + login + '">Ver perfil</a>'
 ```
 
+En código así es muy fácil cometer errores
 ---
 
-Los formatos de **plantillas** nos permite especificar de manera mucho más cómoda texto con datos variables interpolados. Los lenguajes más complejos tienen condicionales e iteradores.
+## Lenguajes de plantillas
+
+Los formatos de **plantillas** nos permite especificar de manera mucho más cómoda **texto con variables interpoladas**. Los lenguajes más complejos tienen condicionales e iteradores.
 
 - *Plantillas en el servidor:* PHP, ASP, JSP,... no son más que lenguajes de plantillas. Y prácticamente cualquier *framework* web del lado del servidor tiene su formato propio, o lo toma prestado de otros.
 - *Plantillas en el cliente:* Uno de los formatos más difundidos es [Mustache](https://mustache.github.io/). No solo hay implementaciones en JS, también en muchos otros lenguajes.
