@@ -426,7 +426,7 @@ La mayoría de *frameworks* nos liberan de la necesidad de modificar el DOM dire
 
 class: titulo, middle
 
-## 8.4
+## 3.4
 ## Plantillas
 
 ---

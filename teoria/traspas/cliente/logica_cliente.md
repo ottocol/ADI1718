@@ -1,20 +1,11 @@
 class: titulo, middle
 
-# Desarrollo en el lado del cliente
-# Tema 9: El modelo. La lógica de negocio
+## Tema 3: Desarrollo en el cliente con Javascript estándar 
+## Parte 2: la "lógica de negocio"
 
 
----
 
-class: titulo, middle
-
-## 9.1 
-## Funcionalidades del modelo
-
-
----
-
-## Responsabilidades del modelo
+## El modelo
 
 - Representar los **datos**
 - Implementar **lógica** de negocio
