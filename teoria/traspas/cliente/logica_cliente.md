@@ -47,6 +47,7 @@ p.saludar()   //Hola, soy Pepe
 Pero `this` no es exactamente lo que parece
 
 ```javascript
+https://jsbin.com/kuletan/edit?js,console
 class Persona {
   constructor(nombre) {
     this.nombre = nombre
