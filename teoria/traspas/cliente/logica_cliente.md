@@ -3,72 +3,144 @@ class: titulo, middle
 ## Tema 3: Desarrollo en el cliente con Javascript estándar 
 ## Parte 2: la "lógica de negocio"
 
-
+---
 
 ## El modelo
 
-- Representar los **datos**
+El "núcleo" de la aplicación, independiente de la interfaz. En aplicaciones clásicas reside en el servidor. En aplicaciones modernas, hay mucho en el *frontend*
+
+Funciones en el *frontend*:
+
+- Representar y almacenar (temporalmente) los **datos**
 - Implementar **lógica** de negocio
 - **Sincronizar** los datos con el servidor
 - **Validar** los datos
 
 ---
 
-## Modelos *explícitos* vs. *implícitos* en *frameworks* JS
+class: titulo, middle
+
+## Intermedio I
+## El problema del `this`
 
 
-- **Explícitos**: definimos el modelo basándonos en las clases del *framework* (p. ej. Backbone)
+---
+
+`this` en JS aparentemente es lo mismo que en Java/C++, por ejemplo:
 
 ```javascript
-var Libro = Backbone.Model.extend({
-  ...
-});
-var unLibro = new Libro();
-unlibro.set('titulo', 'Juego de tronos');
-```
+class Persona {
+  constructor(nombre) {
+    this.nombre = nombre
+  }
+  saludar() {
+    console.log("hola, soy " + this.nombre) 
+  }
+}
 
-- **Implícitos**: usamos POJOs (*Plain Old Javascript Objects*), objetos JS *convencionales* (p. ej. AngularJS)
-
-```html
-<input type="text" ng-model="libro.titulo">
+var p = new Persona("Pepe")
+p.saludar()   //Hola, soy Pepe
 ```
 
 ---
 
-# Colecciones
+Pero `this` no es exactamente lo que parece
 
-Los *frameworks* con modelos explícitos también suelen incluir la idea de "colección" como un conjunto de modelos
+```javascript
+class Persona {
+  constructor(nombre) {
+    this.nombre = nombre
+  }
+  saludar() {
+    console.log("hola, soy " + this.nombre) 
+  }
+}
 
-```language-javascript
-//Backbone
-var Libro = Backbone.Model.extend({});
-var Biblioteca = Backbone.Collection.extend({
-  model: Libro  
-});
-
-var l1 = new Libro({titulo:'Juego de tronos', anyo:1996});
-var l2 = new Libro({titulo:'Choque de reyes', anyo:1998});
-//Podemos pasarle al constructor un array de modelos
-var miBiblioteca = new Biblioteca([l1,l2]);
-var l3 = new Libro({titulo:'Tormenta de espadas', anyo:2000});
-//También podemos añadir modelos uno a uno
-miBiblioteca.add(l3);
-console.log("tienes "  + miBiblioteca.length +  " libros");
+var p = new Persona("Pepe")
+//Estas dos líneas DEBERIAN imprimir lo mismo
+p.saludar()
+setTimeout(p.saludar,1000) //setTimeout ejecuta un código pasados unos ms.
 ```
+
+---
+
+Lo que sucede es que **En Javascript el significado de `this` depende del contexto en que se esté haciendo la llamada** a la función
+
+```javascript
+class Persona {
+  constructor(nombre) {
+    this.nombre = nombre
+  }
+  saludar() {
+    console.log("hola, soy " + this.nombre) 
+  }
+}
+var p = new Persona("Pepe")
+setTimeout(p.saludar,1000)
+
+//Implementación "imaginaria" de setTimeout
+function setTimeout(fn,delay) {
+  //en realidad sleep() no existe en JS
+  sleep(delay) 
+  fn();
+}
+
+//esto es lo mismo que
+fn = p.saludar
+fn()
+```
+
+---
+
+En el ejemplo anterior se hacía de modo artificial, pero en muchos usos reales "perdemos el control" de quién llama a nuestras funciones, por tanto no controlamos su contexto y tampoco quién será `this`:
+
+```javascript
+//Aquí falta el HTML. Ejemplo completo en http://jsbin.com/fudopij/edit?html,js,output
+class Contador {
+  constructor(valor_inicial, nodo_DOM) {
+    this.valor = valor_inicial
+    this.nodo_DOM = nodo_DOM
+  }
+  incrementar() {
+    this.valor++
+    this.mostrar()
+  }
+  mostrar() {
+    nodo_DOM.innerHTML = this.valor
+  }
+}
+
+var c = new Contador(0, document.getElementById("contador"))
+document.getElementById("boton").addEventListener('click', c.incrementar)
+```
+
+---
+
+Afortunadamente hay un mecanismo estándar para forzar qué debe ser `this` dentro de una función.
+
+`bind` genera una nueva función en la que `this` apuntará a lo que digamos
+
+```javascript
+...
+document
+  .getElementById("boton")
+*  .addEventListener('click', c.incrementar.bind(c))
+```
+
 
 ---
 
 class: titulo, middle
 
-## 9.2 
+## 3.5 
 ## Sincronización con el servidor
 
 ---
 
-Necesitamos sincronizar los modelos guardados en el navegador con el servidor, esto lo haremos llamando a un API REST. Por ejemplo cuando creamos en local un nuevo `Libro` tendremos que lanzar una petición POST para crearlo también en el servidor. Vamos a ver
+Necesitamos sincronizar los modelos guardados en el navegador con el servidor, esto lo haremos llamando a un API REST. Por ejemplo, en una *app* de una biblioteca:
 
-- APIs nativos del navegador para lanzar peticiones HTTP
-- Funcionalidades adicionales que nos dan los *frameworks* JS
+- Cuando el usuario rellena un formulario en el navegador para dar de alta un  nuevo `Libro` tendremos que lanzar una petición POST para crearlo también en el servidor
+- Para obtener un listado de libros, hay que hacer una petición GET y transformar el JSON a un array de objetos JS
 
 
 ---
@@ -114,7 +186,7 @@ console.log(objeto.login) //pepe
 
 ## `fetch` API
 
-El API recomendado actualmente para hacer peticiones AJAX. No todos los navegadores [lo implementan](http://caniuse.com/#search=fetch). Si no, se puede usar un [*polyfill*](https://github.com/github/fetch)
+El API recomendado actualmente para hacer peticiones AJAX. Prácticamente todos los navegadores actuales [lo implementan](http://caniuse.com/#search=fetch). Si no, se puede usar un [*polyfill*](https://github.com/github/fetch)
 
 Buenas intros al API: 
 
@@ -136,7 +208,11 @@ fetch('https://api.github.com/users/octocat')
 
 ---
 
-## Intermedio: promesas en JS
+class: titulo, middle
+
+## Intermedio II: promesas en JS
+
+---
 
 - El `then()` y el `catch()` no son propios de `fetch`, sino de un estándar llamado **promesas** (promises). Son una forma de tratar con código asíncrono **alternativa a los *callbacks***
 
@@ -146,23 +222,28 @@ fetch('https://api.github.com/users/octocat')
 
 --
 
-- `then()` y `catch()` son métodos de la clase `Promise`. A `then` le podemos pasar una función que se ejecutará cuando la promesa pase a *resolved* y a `catch` cuando pase a *rejected*
+- `then()` y `catch()` son métodos de la clase `Promise`.
+  -  A `then` le podemos pasar dos funciones, que se ejecutará cuando la promesa pase a *resolved* y a *rejected* respectivamente. La segunda es opcional, de hecho habitualmente solo se le pasa la primera.
+  -  A `catch` le podemos pasar una función que se ejecutará cuando la promesa pase a *rejected*
 
 ---
 
 ```javascript
 //fetch devuelve una Promise
 var promesa = fetch('https://api.github.com/users/octocat')
-//then devuelve también la promesa
+//then devuelve una nueva promesa "pendiente"
+//cuando la promesa original se resuelve, se llama al handler
+//y la nueva promesa pasa también a resuelta con el valor devuelto por el handler
 var promesa2 = promesa.then(function(respuesta) {
    console.log('El servidor ha respondido!!')
+   return("OK")
 })
+//El then no tiene handler de rejected. Si "promesa" se rechaza, "promesa2" pasa a ser una "copia", tb rechazada
 promesa2.catch(function(error){
    console.log('La petición ha fallado')
 })
 
 //Como tanto fetch como then devuelven la promesa, podemos encadenarlo,
-//como hacíamos antes
 fetch('https://api.github.com/users/octocat')
  .then(function(respuesta) {
    console.log('El servidor ha respondido!!')
@@ -177,12 +258,31 @@ Podríais ver cómo funciona esto último si creárais [vuestras propias promesa
 
 ---
 
+Si el *handler* de `then` lanza un error, la promesa devuelta por `then` pasa a *rechazada* con valor el error lanzado
+
+```javascript
+fetch('https://api.github.com/users/octocat')
+ .then(function(respuesta) {   //si se ejecuta el throw, la promesa devuelta pasa a rejected, con el valor lanzado
+    if (...)
+       throw "error!!"
+ })
+ .then(function(valor) {   //como no tiene handler de rejected, la promesa devuelta es una copia de la original
+
+ })
+ .catch(function(valor){
+   console.log(valor)   //error!!
+ })
+```
+
+
+---
+
 ## ¿Por qué no usar *callbacks*?
 
 Con ellos es tedioso **encadenar** llamadas asíncronas. Acabamos teniendo un *callback* dentro de un *callback* dentro de un *callback*... (alias [*callback hell*](http://callbackhell.com/))
 
 ```javascript
-//http://jsbin.com/posalo/edit?html,js,output
+//http://jsbin.com/bucezigegi/edit?output
 //Ejemplo un poco retorcido: evento->esperar 3 segundos->llamada AJAX
 document.getElementById('miBoton').addEventListener('click', function(){
   setTimeout(function() {
@@ -228,7 +328,34 @@ document.getElementById('miBoton').addEventListener('click', function(){
 })
 ```
 
-Nótese que si una función pasada a un `then` o a un `catch` devuelve una promesa, el `then` o el `catch` pasan a su vez a devolverla
+Nótese que **si un handler de un `then` o a un `catch` devuelve una promesa, el `then` o el `catch` pasan a su vez a devolverla**
+
+---
+
+## Async/Await
+
+Escribir código asíncrono como si fuera secuencial
+
+- Una función marcada como `async` devuelve una promesa
+- Si ponemos `await` delante de una llamada a una función `async` nos esperamos a que termine 
+
+```javascript
+//Versión completa en https://codepen.io/ottocol/pen/Bmymvg?editors=1010#0
+async function obtenerChiste() {
+  return fetch("https://api.icndb.com/jokes/random")
+}
+
+async function parsearJSON(respuesta) {
+  return respuesta.json()
+}
+
+async function mostrarChiste() {
+  var resp = await obtenerChiste()
+  var json = await parsearJSON(resp)
+  var texto = json.value.joke
+  console.log(texto)
+}
+```
 
 ---
 
@@ -348,7 +475,7 @@ Aclaración: CORS **no es un mecanismo de protección del servidor**. Nada nos i
 
 La mayoría **simplifica las peticiones** al servidor. Definimos la URL base del recurso y si el API remoto cumple las convenciones REST podemos recuperar/guardar de forma más sencilla que con `fetch/XMLHttpRequest`.
 
-```language-javascript
+```javascript
 //Ejemplo en AngularJS: http://jsbin.com/kisuvu/edit?html,js,output
 var modulo = angular.module('ejemplo_REST', ['ngResource']);
 modulo.controller('MainCtrl', function($scope, $resource){
@@ -373,72 +500,7 @@ modulo.controller('MainCtrl', function($scope, $resource){
 
 class: titulo, middle
 
-## 9.3 
-## Vinculación de datos (*data binding*)
-
----
-
-## *Data binding*
-
-- **Vinculación automática** entre el modelo y la vista. Cuando cambiamos uno cambia el otro automáticamente. 
-
-- **Elimina mucho trabajo** de programación, pero también tiene "mala fama" porque puede producir *bugs* difíciles de detectar.
-
-"Angular supports two-way databinding, and this is how it does it: It scans through everything that has such a binding, and sees if it has changed by comparing its value to a stored copy of its value. If a change is found, it triggers the code listening for such a change. It then scans through everything looking for changes again. This keeps going until no more changes are detected." [https://larseidnes.com/2014/11/05/angularjs-the-bad-parts/](https://larseidnes.com/2014/11/05/angularjs-the-bad-parts/)
-
----
-
-## Tipos de *data binding*
-
-- **Unidireccional**: modelo->vista o vista->modelo
-- **Bidireccional**: modelo<->vista
-
-En la web, el *binding* de vista a modelo tiene sentido en campos de formulario
-
----
-
-## *Data binding* en Angular
-
-Ya hemos visto que el *data binding* es una de las características más destacadas de Angular
-
-![Tomado de la doc. de Angular](https://docs.angularjs.org/img/guide/concepts-databinding1.png)<!-- .element class="stretch" -->
-
----
-
-## *data binding* en Backbone
-
-Aunque Backbone no tiene soporte nativo para *data binding*, hay unos cuantos *plugins* que lo implementan: [Epoxy](http://epoxyjs.org), [Stickit](https://github.com/NYTimes/backbone.stickit), [Baguette](http://spacenick.github.io/backbone-baguette/), ...
-
----
-
-## Ejemplo: `stickit` para Backbone
-
-```language-javascript
-//http://jsbin.com/koriku/edit?js,output
-var Libro = Backbone.Model.extend();
-var unLibro = new Libro({
-  'titulo':'Juego de tronos', 
-  'autor':'George R.R. Martin'});
-var VistaLibro = Backbone.View.extend({
- render: function() {
-   this.$el.html('<b id="titulo"></b>, de <em id="autor"></em>');
-   this.stickit();
-   return this; 
- },
- bindings: {
-   '#titulo':'titulo',
-   '#autor':'autor'
- } 
-});
-var miVista = new VistaLibro({model:unLibro}); 
-$('body').append( miVista.render().$el);
-```
-    
----
-
-class: titulo, middle
-
-## 9.4 
+## 3.6 
 ## Almacenamiento de datos en el cliente
 
 
@@ -454,7 +516,7 @@ class: titulo, middle
 
 --
 
-- **Datos que no podemos sincronizar** con el servidor por ejemplo por falta de conectividad en este momento (¡en el metro!)
+- **Datos que no podemos sincronizar** con el servidor por ejemplo por falta de conectividad en este momento (por ejemplo, porque estamos en el metro)
 
 ---
 
@@ -474,7 +536,7 @@ localStorage.login = "pepe"
 
 ---
 
-## Ejemplos de `localStorage`
+## Ejemplo de `localStorage`
 
 ```javascript
 //http://jsbin.com/bofabe/edit?html,js,output
@@ -490,7 +552,7 @@ function guardarNombre() {
 }
 function mostrarNombre() {
   alert("Me acuerdo de ti, " + localStorage.usuario +
-  " vas a cumplir " + (parseInt(localStorage.edad) + 1) + " años!!"
+  " vas a cumplir " + (parseInt(localStorage.edad) + 1) + " años!!")
 }
 function mostrarTodosLosDatos() {
   datos=""
@@ -511,3 +573,5 @@ Hay dos estándares
 - IndexedDB: una base de datos de pares clave-valor (tipo NoSQL)
 
 El estándar apoyado oficialmente es IndexedDB. Web SQL se ha dejado de mantener y no habrá versiones futuras, pero Web SQL tiene la ventaja de que es más inmediato para desarrolladores que conocen SQL y funciona en prácticamente todos los navegadores de móviles.
+
+Ya veremos esto en los temas de dispositivos móviles
