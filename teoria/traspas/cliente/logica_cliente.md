@@ -96,7 +96,7 @@ fn()
 En el ejemplo anterior se hacía de modo artificial, pero en muchos usos reales "perdemos el control" de quién llama a nuestras funciones, por tanto no controlamos su contexto y tampoco quién será `this`:
 
 ```javascript
-//Aquí falta el HTML. Ejemplo completo en http://jsbin.com/fudopij/edit?html,js,output
+//Este código NO FUNCIONA por culpa del this dinámico en JS
 class Contador {
   constructor(valor_inicial, nodo_DOM) {
     this.valor = valor_inicial
@@ -114,6 +114,8 @@ class Contador {
 var c = new Contador(0, document.getElementById("contador"))
 document.getElementById("boton").addEventListener('click', c.incrementar)
 ```
+
+Ejemplo completo en [http://jsbin.com/fudopij/edit?html,js,output](http://jsbin.com/fudopij/edit?html,js,output)
 
 ---
 
@@ -160,7 +162,7 @@ Es una combinación de tecnologías:
 
 ## Las peticiones AJAX son *asíncronas*
 
- No se para la ejecución de nuestro código hasta que responda el servidor, ya que Javascript no es *multihilo*, y se bloquearía el navegador
+ No se para la ejecución de nuestro código hasta que responda el servidor, ya que **Javascript no es *multihilo***, y se bloquearía el navegador
 
 ```javascript
 //fetch hace una petición AJAX, pero no se espera a recibir la respuesta
