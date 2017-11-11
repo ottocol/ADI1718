@@ -4,23 +4,18 @@
 
 ---
 
-## Contenidos
+## ¿Por qué frameworks JS?
 
-- Uno
-- Dos
-
+- Guía para estructurar adecuadamente el código
+- Los APIs nativos del navegador carecen de ciertas funcionalidades
 
 ---
 
-## Algo de código
-
-```js
-function miFuncion() {
-    return "MOLA!"
-}
-```
+## Auge y caída de los frameworks MVC
 
 ---
 
 ## Referencias:
 
+
+- Las dos charlas
