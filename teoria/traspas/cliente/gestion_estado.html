@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head> 
+    <link type="text/css" rel="stylesheet" href="../../remarkjs/styles/adi.css"/>
+  </head>
+  <body>
+    <script src="../../remarkjs/js/remark-latest.min.js">
+    </script>
+    <script>
+      remark.macros['scale'] = function(percentage) {
+      var url = this;
+      return '<img src="' + url + '" style="width: ' + percentage + '" />';
+    };  
+    var slideshow = remark.create({
+      navigation: {
+        scroll: false
+      },
+      highlightLines: true,
+      sourceUrl: 'gestion_estado.md'
+    });
+    </script>
+  </body>
+</html>
