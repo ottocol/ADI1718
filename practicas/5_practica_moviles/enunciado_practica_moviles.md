@@ -18,5 +18,5 @@ b) **(1 punto)** Usar React Native. Tendréis que cambiar el `render()` de todos
 
 ## Entrega
 
-El plazo de entrega concluye el domingo **10 de enero de 2018** a las 23:55 horas. La entrega se realizará como es habitual a través de Moodle. Entregad una carpeta comprimida con el proyecto de esta práctica y el de la anterior en dos subcarpetas, ya que ambos son necesarios para ejecutar la aplicación. 
+El plazo de entrega concluye el miércoles **10 de enero de 2018** a las 23:55 horas. La entrega se realizará como es habitual a través de Moodle. Entregad una carpeta comprimida con el proyecto de esta práctica y el de la anterior en dos subcarpetas, ya que ambos son necesarios para ejecutar la aplicación. 
 
